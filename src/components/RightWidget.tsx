@@ -20,7 +20,7 @@ const slides = [
 ]
 
 const RightWidget = ({ width }: { width: number }) => {
-  const weather = useGetWeather()
+  const weather = useGetWeather() as any
   return (
     <div
       className={`aspect-video flex flex-col justify-center space-y-8 items-center rounded-xl bg-white/10 shadow-lg py-8 w-[250px] ms-4 ${

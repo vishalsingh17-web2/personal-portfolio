@@ -46,7 +46,7 @@ function useGetWeather() {
   const [location, setLocation] = useState<
     { latitude: string; longitude: string } | undefined
   >()
-  const [weather, setWeather] = useState()
+  const [weather, setWeather] = useState(undefined)
 
   const handleLocationClick = useCallback(() => {
     if (navigator.geolocation) {
@@ -82,7 +82,7 @@ function useGetWeather() {
     handleLocationClick()
   }, [])
 
-  return weather ?? weatherRes
+  return weather
 }
 
 export default useGetWeather
