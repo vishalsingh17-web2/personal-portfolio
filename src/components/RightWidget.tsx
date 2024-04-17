@@ -66,7 +66,7 @@ const RightWidget = ({ width }: { width: number }) => {
           </div>
           <div className='flex flex-col items-center justify-center me-3 mb-3'>
             <IoLogoJavascript color={'white'} size={35} />
-            <p className='text-[8px] text-white/40'>React</p>
+            <p className='text-[8px] text-white/40'>Javascript</p>
           </div>
           <div className='flex flex-col items-center justify-center me-3 mb-3'>
             <TbBrandReactNative color={'white'} size={35} />
