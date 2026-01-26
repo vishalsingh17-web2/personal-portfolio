@@ -85,10 +85,10 @@ function HomeIndicator() {
 }
 
 // iOS Settings-style List Item
-function ListItem({ 
-  icon, 
-  iconBg, 
-  label, 
+function ListItem({
+  icon,
+  iconBg,
+  label,
   onClick,
   showChevron = true,
 }: {
@@ -104,7 +104,7 @@ function ListItem({
       className="flex items-center gap-3 w-full px-4 py-[11px] bg-[#1c1c1e] first:rounded-t-[10px] last:rounded-b-[10px] active:bg-[#2c2c2e] transition-colors"
       whileTap={{ scale: 0.98 }}
     >
-      <div 
+      <div
         className="w-[29px] h-[29px] rounded-[6px] flex items-center justify-center text-white"
         style={{ background: iconBg }}
       >
@@ -125,10 +125,10 @@ function HomeScreen({ navigate }: { navigate: (screen: Screen) => void }) {
   return (
     <div className="h-full flex flex-col bg-black">
       <StatusBar />
-      
+
       <div className="flex-1 overflow-y-auto">
         <NavBarLarge title="Portfolio" />
-        
+
         {/* Profile Card */}
         <div className="mx-4 mb-6">
           <motion.button
@@ -150,7 +150,7 @@ function HomeScreen({ navigate }: { navigate: (screen: Screen) => void }) {
         </div>
 
         {/* Menu Items */}
-        <motion.div 
+        <motion.div
           className="mx-4 mb-6"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -185,7 +185,7 @@ function HomeScreen({ navigate }: { navigate: (screen: Screen) => void }) {
         </motion.div>
 
         {/* Status Section */}
-        <motion.div 
+        <motion.div
           className="mx-4 mb-6"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -205,7 +205,7 @@ function HomeScreen({ navigate }: { navigate: (screen: Screen) => void }) {
         </motion.div>
 
         {/* Skills */}
-        <motion.div 
+        <motion.div
           className="mx-4 pb-20"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -487,7 +487,7 @@ function ContactScreen({ onBack }: { onBack: () => void }) {
               transition={{ delay: index * 0.08 }}
               className="flex items-center gap-3 p-3 active:bg-[#2c2c2e] transition-colors first:rounded-t-[10px] last:rounded-b-[10px]"
             >
-              <div 
+              <div
                 className="w-[38px] h-[38px] rounded-[8px] flex items-center justify-center text-lg"
                 style={{ backgroundColor: contact.bgColor }}
               >
@@ -530,7 +530,7 @@ export function PhoneContent() {
     setDirection(1)
     setCurrentScreen(screen)
   }
-  
+
   const goBack = () => {
     setDirection(-1)
     setCurrentScreen('home')
