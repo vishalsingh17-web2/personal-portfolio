@@ -224,10 +224,21 @@ interface IPhone3DProps {
 }
 
 export function IPhone3D({ children, className = '' }: IPhone3DProps) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   return (
     <div className={`w-full h-full bg-transparent ${className}`}>
       <Canvas
-        camera={{ position: [0, 0, 8], fov: 45 }}
+        camera={{ position: [0, 0, isMobile ? 9.5 : 8], fov: isMobile ? 50 : 45 }}
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
         style={{ width: '100%', height: '100%' }}

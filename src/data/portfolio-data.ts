@@ -17,6 +17,7 @@ export interface Project {
   link?: string;
   github?: string;
   image?: string;
+  funfacts?:string[]
 }
 
 export const personalInfo = {
@@ -24,7 +25,7 @@ export const personalInfo = {
   title: "Full Stack Mobile Developer",
   tagline: "Building beautiful, performant mobile experiences",
   email: "hello@vishal.dev",
-  location: "India",
+  location: "Bengaluru, India",
   bio: `I'm a passionate mobile developer with expertise in React Native, Flutter, and native Android/iOS development.
         I've been building apps for 3+ years, focusing on creating seamless user experiences that help businesses
         succeed while making people's lives better.`,
@@ -52,52 +53,181 @@ export const skills = [
 
 export const experiences: Experience[] = [
   {
-    title: "Affinsys AI Pvt Ltd.",
-    company: "Affinsys AI",
-    companyUrl: "https://www.linkedin.com/company/affinsys-ai/mycompany/",
-    logo: "https://media.licdn.com/dms/image/C560BAQG0Bazc7rI1eQ/company-logo_200_200/0/1630617867380",
-    role: "Software Developer",
-    duration: "Oct 2022 - Present",
+    title: 'Best Buy',
+    company: 'Best Buy',
+    companyUrl: 'https://www.linkedin.com/company/best-buy/mycompany/',
+    logo: 'https://media.licdn.com/dms/image/v2/D560BAQGT2K1dnyeIlA/company-logo_200_200/company-logo_200_200/0/1732018895513/best_buy_logo?e=1770854400&v=beta&t=totR254IIvMx5CybDAWW_G-eyBVQ9DWNxsLOm38-sKI',
+    role: 'Software Engineer 1',
     description: [
-      "Spearheaded autogen React Native integration in Android project, enhancing functionality",
-      "Developed mobile app from scratch with React Native, featuring deep linking and robust notifications",
-      "Achieved 30% reduction in development time by leveraging npm packages for form handling",
-      "Optimized API handling using RTK Query, ensuring cross-platform performance",
-      "Streamlined codebase, conducted reviews, and fostered continuous improvement",
+      'Worked with monorepo codebase using react native and NX',
+      'Investigated and resolved iOS-specific issues affecting guest user by analyzing cross-platform behavior',
+      'Debugged React Native to native bridge communication issues and fixed data synchronization gaps during user logout flows.',
+      'Analyzed GraphQL query failures causing inconsistent saved items state and implemented cache and query invalidation fixes.',
+      'Implemented session-aware cache reset strategies to ensure correct user-specific data loading.',
+      'Collaborated with cross-functional teams to clarify product requirements for guest user functionality.',
+      'Worked end-to-end on an event management feature in the Best Buy consumer app.',
+      'Integrated device calendar support using native codebases in Swift and Kotlin.',
+      'Scheduled user reminders into the device calendar for event notifications.',
+      'Built native modules to enable cross-platform communication between React Native and iOS/Android.',
+      'Developed and maintained features in a large-scale React Native app serving millions of users.',
     ],
-    skills: ["React Native", "React", "Redux", "RTK Query", "Firebase", "Jest", "Android/iOS"],
+    duration: 'Sept 2025 - Present',
+    skills: [
+  // Mobile & Frontend
+      "React Native",
+      "TypeScript",
+      "JavaScript",
+      "GraphQL",
+      "TanStack Query",
+      "RxJS",
+      "Nx Monorepo",
+
+      // Native Mobile
+      "Swift",
+      "Kotlin",
+      "Android (Java)",
+      "iOS Development",
+    ],
   },
   {
-    title: "TreeVed",
-    company: "TreeVed",
-    companyUrl: "https://www.linkedin.com/company/treeved-sarvlok/about/",
-    logo: "https://media.licdn.com/dms/image/C560BAQFkbUM7rG49Rw/company-logo_200_200/0/1658988082992",
-    role: "Flutter Developer Intern",
-    duration: "Jan 2022 - Apr 2022",
+    title: 'Affinsys AI Pvt Ltd.',
+    company: 'Affinsys AI',
+    companyUrl: 'https://www.linkedin.com/company/affinsys-ai/mycompany/',
+    logo: 'https://media.licdn.com/dms/image/v2/C560BAQG0Bazc7rI1eQ/company-logo_200_200/company-logo_200_200/0/1630617867380?e=1770854400&v=beta&t=ETNFTPRFJ9KuD_3n3_Hg0M4chGFAy-Uz6q-tf76cZx0',
+    role: 'Software Developer',
+    duration: 'Oct 2022 - Sept 2025',
     description: [
-      "Debugged, managed, and created new screens and features for the app",
-      "Enhanced proficiency in Flutter state management using Provider and Bloc packages",
-      "Utilized method channels for native API calls and implemented repository pattern",
+      'Led development of mobile apps from scratch using React Native in TypeScript.',
+      'Worked on Project Autogen, a backend-driven form builder using JSON rendering, which reduced overall development time by 60%.',
+      'Wrote payment processors using the Strategy pattern and handled retries and failures using a state observer.',
+      'Built CI/CD pipelines using GitHub Actions and Fastlane for the Android application, enhancing build stability.',
+      'Worked on Native and Turbo modules to integrate native APIs.',
+      'Added security checks to handle Frida injections and SSL pinning to prevent reverse engineering.',
+      'Added internationalization support for multiple languages in the app.',
+      'Worked closely with Vision Camera and ML Kit to implement QR code scanning and face detection features.',
+      'Added OTA updates and Firebase Crashlytics/Sentry for crash reporting.',
+      'Implemented deep linking and a notification system for user engagement.',
     ],
-    skills: ["Flutter", "Dart", "Bloc", "Provider", "Firebase"],
+    skills: [
+      'React Native',
+      'React',
+      'TypeScript',
+      'Redux',
+      'RTK Query',
+      'Firebase',
+      'Jest',
+      'Android/iOS',
+
+      // Architecture & Patterns
+      'Strategy Pattern',
+      'State Observer Pattern',
+      'Backend-driven UI',
+      'JSON-based Form Rendering',
+
+      // Mobile Platform & Native
+      'Native Modules',
+      'Turbo Modules',
+      'Android SDK',
+      'iOS SDK',
+
+      // CI/CD & DevOps
+      'GitHub Actions',
+      'Fastlane',
+      'CI/CD Pipelines',
+
+      // Security
+      'SSL Pinning',
+      'Frida Detection',
+      'Mobile App Security',
+
+      // ML & Camera
+      'React Native Vision Camera',
+      'ML Kit',
+      'QR Code Scanning',
+      'Face Detection',
+
+      // Reliability & Updates
+      'OTA Updates',
+      'Firebase Crashlytics',
+      'Sentry',
+
+      // App Features
+      'Deep Linking',
+      'Push Notifications',
+      'Internationalization (i18n)',
+
+      // Payments
+      'Payment Processing',
+      'Retry & Failure Handling',
+    ],
   },
   {
-    title: "Cruv",
-    company: "Cruv",
-    companyUrl: "https://www.linkedin.com/company/cruv/about/",
-    logo: "https://media.licdn.com/dms/image/C4D0BAQGQGClEa5MrMA/company-logo_200_200/0/1669889801468",
-    role: "Flutter Developer Intern",
-    duration: "Nov 2021 - Jan 2022",
+    title: 'TreeVed',
+    company: 'TreeVed',
+    companyUrl: 'https://www.linkedin.com/company/treeved-sarvlok/about/',
+    logo: 'https://media.licdn.com/dms/image/v2/C560BAQFkbUM7rG49Rw/company-logo_200_200/company-logo_200_200/0/1658988082992?e=1770854400&v=beta&t=tOfQ3HT8LnEmwa-4zF4ARC72azfwvtt6bTCg9kergNg',
+    role: 'Flutter Developer Intern',
+    duration: 'Jan 2022 - Apr 2022',
     description: [
-      "Implemented pixel-perfect UI designs with attention to detail",
-      "Utilized isolates to enhance app performance and manage heavy background tasks",
-      "Employed isolates for calling APIs in separate memory threads",
+      'Debugged, managed, and created new screens and features for the app',
+      'Enhanced proficiency in Flutter state management using Provider and Bloc packages',
+      'Utilized method channels for native API calls and implemented repository pattern',
     ],
-    skills: ["Flutter", "Dart", "Isolates", "Performance Optimization"],
+    skills: ['Flutter', 'Dart', 'Bloc', 'Provider', 'Firebase'],
   },
-];
+  {
+    title: 'Cruv',
+    company: 'Cruv',
+    companyUrl: 'https://www.linkedin.com/company/cruv/about/',
+    logo: 'https://media.licdn.com/dms/image/v2/C4D0BAQGQGClEa5MrMA/company-logo_200_200/company-logo_200_200/0/1669889801468/cruv_logo?e=1770854400&v=beta&t=FWQGlwTLofpZjT23udQTtYIZkdsC8toGmRIyuDWDr_U',
+    role: 'Flutter Developer Intern',
+    duration: 'Nov 2021 - Jan 2022',
+    description: [
+      'Implemented pixel-perfect UI designs with attention to detail',
+      'Utilized isolates to enhance app performance and manage heavy background tasks',
+      'Employed isolates for calling APIs in separate memory threads',
+    ],
+    skills: ['Flutter', 'Dart', 'Isolates', 'Performance Optimization'],
+  },
+]
 
 export const projects: Project[] = [
+  {
+    title: "Cloud Storage",
+    description: "Cloud storage solution with file upload, download, and sharing features",
+    highlights: [
+      "Architected and implemented a secure, multi-user cloud storage backend using Flask, supporting file upload, download, preview, streaming (with range support), search, and directory management.",
+      "Designed and enforced robust per-user storage quota management with dynamic usage calculation and reserved disk space for custom quotas.",
+      "Built RESTful API endpoints for all major file operations, including upload, download, preview, stream, search, delete, rename, and folder creation.",
+      "Integrated authentication, rate limiting, and middleware to secure file operations and ensure fair resource usage.",
+      "Developed utility modules for efficient storage calculation, file metadata extraction, and file type detection.",
+      "Enabled scalable configuration via JSON-based rules for user quotas, credentials, and operational policies.",
+      "Automated CI/CD pipelines using GitHub Actions to run tests, lint code, manage secrets, and deploy on every push or pull request.",
+      "Created shell scripts for local server management and credential handling, streamlining developer onboarding and environment setup.",
+      "Built a modern, responsive file manager frontend using React 19, TypeScript 5, Vite, Tailwind CSS, Radix UI, and Framer Motion.",
+      "Implemented advanced file management UX including drag-and-drop uploads, real-time progress tracking, previews, theming (light/dark), Zustand state management, TanStack Query synchronization, and shareable links with React Router."
+    ],
+    techStack: ["Flask", "Python", "React", "TypeScript", "Vite", "Tailwind CSS", "ShadCN", "Zustand", "TanStack Query", "GitHub Actions"],
+    funfacts: [
+      "- This whole project was deployed on my spare android device initially, before moving to my VPS.",
+      "- You can use it as PWA on your phone too!"
+    ]
+  },
+  {
+    title: "Personal Finance dashboard",
+    description: "Personal finance dashboard with expense tracking and budgeting features",
+    highlights: [
+      "Built a secure, multi-user personal finance dashboard for viewing, searching, and categorizing transactions.",
+      "Automated transaction ingestion using custom regex parsers for bank statements and email notifications (HDFC, ICICI).",
+      "Implemented dynamic transaction categorization with merchant rules, amount thresholds, and manual overrides.",
+      "Developed RESTful APIs for transactions, categories, search, and reporting.",
+      "Integrated Google OAuth2 and Gmail API for secure authentication and automatic transaction sync.",
+      "Built an analytics dashboard with summary metrics, category breakdowns, and interactive charts.",
+      "Implemented advanced filters (date, type, payment mode, category) and real-time data refresh.",
+      "Automated CI/CD with GitHub Actions and enforced role-based access control."
+    ],
+    techStack: ["Flask", "Python", "React", "TypeScript", "Vite", "Tailwind CSS", "ShadCN", "Zustand", "TanStack Query", "GitHub Actions", "Google OAuth2", "Gmail API"],
+  },
   {
     title: "Fall Detection System",
     description: "ML/DL powered fall detection system using smartphone sensors",

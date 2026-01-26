@@ -1,21 +1,57 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Github, Linkedin, Twitter, Mail, MapPin } from 'lucide-react'
 import { personalInfo } from '@/data/portfolio-data'
 import { IPhone3D } from '@/components/visuals/IPhone3D'
 import { PhoneContent } from '@/components/phone/PhoneContent'
 
+// Mobile breakpoint - show full phone content directly
+const MOBILE_BREAKPOINT = 1024
+
 export function HeroWithPhone() {
+  const [isMobile, setIsMobile] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    }
+
+    checkMobile()
+    setMounted(true)
+
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Prevent hydration mismatch
+  if (!mounted) {
+    return <div className="h-[100dvh] w-screen bg-black" />
+  }
+
+  // Mobile: Show phone content directly, fullscreen
+  if (isMobile) {
+    return (
+      <div
+        className="fixed inset-0 bg-black"
+        style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}
+      >
+        <PhoneContent />
+      </div>
+    )
+  }
+
+  // Desktop: Show full layout with 3D phone
   return (
     <div className="h-screen w-screen overflow-hidden bg-[#030712] relative">
       {/* Ambient background effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Gradient orbs */}
         <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[150px]" />
       </div>
 
-
+      {/* Grid pattern */}
       <div
         className="absolute inset-0 opacity-30"
         style={{
@@ -29,28 +65,24 @@ export function HeroWithPhone() {
 
       {/* Main content */}
       <div className="relative h-full flex items-center">
-        <div className="container mx-auto px-6 lg:px-12 h-full">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center h-full">
+        <div className="container mx-auto px-12 h-full">
+          <div className="grid grid-cols-2 gap-16 items-center h-full">
             {/* Left side - Text content */}
-            <div className="text-center lg:text-left order-2 lg:order-1">
+            <div className="text-left">
               {/* Status Badge */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className="flex items-center justify-center lg:justify-start gap-2 mb-6"
+                className="flex items-center gap-2 mb-6"
               >
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-800 backdrop-blur-sm">
                   <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-xs sm:text-sm text-zinc-400">
-                    Available for work
-                  </span>
+                  <span className="text-sm text-zinc-400">Available for work</span>
                 </div>
-                <div className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-800 backdrop-blur-sm">
+                <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-800 backdrop-blur-sm">
                   <MapPin className="w-3 h-3 text-zinc-500" />
-                  <span className="text-xs sm:text-sm text-zinc-400">
-                    {personalInfo.location}
-                  </span>
+                  <span className="text-sm text-zinc-400">{personalInfo.location}</span>
                 </div>
               </motion.div>
 
@@ -59,7 +91,7 @@ export function HeroWithPhone() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
-                className="text-zinc-400 text-base sm:text-lg mb-3"
+                className="text-zinc-400 text-lg mb-3"
               >
                 Hello, I'm
               </motion.p>
@@ -69,7 +101,7 @@ export function HeroWithPhone() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 tracking-tight"
+                className="text-7xl font-bold mb-4 tracking-tight"
               >
                 <span className="text-white">{personalInfo.name}</span>
                 <span className="text-blue-400">.</span>
@@ -80,7 +112,7 @@ export function HeroWithPhone() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.5 }}
-                className="text-xl sm:text-2xl md:text-3xl text-zinc-400 mb-6 font-light"
+                className="text-3xl text-zinc-400 mb-6 font-light"
               >
                 {personalInfo.title}
               </motion.h2>
@@ -90,7 +122,7 @@ export function HeroWithPhone() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
-                className="text-sm sm:text-base md:text-lg text-zinc-500 max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed"
+                className="text-lg text-zinc-500 max-w-xl mb-8 leading-relaxed"
               >
                 {personalInfo.tagline}. Explore my work by interacting with the
                 phone on the right.
@@ -101,29 +133,13 @@ export function HeroWithPhone() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.7, duration: 0.5 }}
-                className="flex justify-center lg:justify-start gap-3"
+                className="flex gap-3"
               >
                 {[
-                  {
-                    icon: Github,
-                    href: personalInfo.social.github,
-                    label: 'GitHub',
-                  },
-                  {
-                    icon: Linkedin,
-                    href: personalInfo.social.linkedin,
-                    label: 'LinkedIn',
-                  },
-                  {
-                    icon: Twitter,
-                    href: personalInfo.social.twitter,
-                    label: 'Twitter',
-                  },
-                  {
-                    icon: Mail,
-                    href: `mailto:${personalInfo.email}`,
-                    label: 'Email',
-                  },
+                  { icon: Github, href: personalInfo.social.github, label: 'GitHub' },
+                  { icon: Linkedin, href: personalInfo.social.linkedin, label: 'LinkedIn' },
+                  { icon: Twitter, href: personalInfo.social.twitter, label: 'Twitter' },
+                  { icon: Mail, href: `mailto:${personalInfo.email}`, label: 'Email' },
                 ].map((social) => (
                   <motion.a
                     key={social.label}
@@ -145,7 +161,7 @@ export function HeroWithPhone() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.2, duration: 0.5 }}
-                className="mt-8 text-xs text-zinc-600 hidden lg:block"
+                className="mt-8 text-xs text-zinc-600"
               >
                 <span className="inline-flex items-center gap-2">
                   <span className="w-4 h-4 border border-zinc-700 rounded flex items-center justify-center text-[10px]">
@@ -161,7 +177,7 @@ export function HeroWithPhone() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3, duration: 0.8, ease: 'easeOut' }}
-              className="h-full min-h-[500px] max-h-screen py-4 order-1 lg:order-2"
+              className="h-full min-h-[500px] max-h-screen py-4"
             >
               <IPhone3D>
                 <PhoneContent />
