@@ -24,7 +24,7 @@ export const personalInfo = {
   name: "Vishal",
   title: "Full Stack Mobile Developer",
   tagline: "Building beautiful, performant mobile experiences",
-  email: "hello@vishal.dev",
+  email: "work.vishal.dev@gmail.com",
   location: "Bengaluru, India",
   bio: `I'm a passionate mobile developer with expertise in React Native, Flutter, and native Android/iOS development.
         I've been building apps for 3+ years, focusing on creating seamless user experiences that help businesses

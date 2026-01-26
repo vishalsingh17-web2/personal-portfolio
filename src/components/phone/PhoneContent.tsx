@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ForwardRefExoticComponent, RefAttributes, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ChevronLeft,
@@ -14,16 +14,14 @@ import {
   Linkedin,
   Twitter,
   Sparkles,
-
   Smartphone,
   Globe,
   ChevronDown,
   Download,
   Eye,
-
-  Heart,
   Star,
   CheckCircle2,
+  LucideProps,
 } from 'lucide-react'
 import { personalInfo, experiences, projects } from '@/data/portfolio-data'
 
@@ -108,7 +106,9 @@ function ListItem({
   onClick,
   showChevron = true,
 }: {
-  icon: React.ElementType
+  icon: ForwardRefExoticComponent<
+    Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
+  >
   iconBg: string
   label: string
   onClick: () => void
@@ -117,55 +117,23 @@ function ListItem({
   return (
     <motion.button
       onClick={onClick}
-      className="flex items-center gap-3 w-full px-4 py-[11px] bg-[#1c1c1e] first:rounded-t-[10px] last:rounded-b-[10px] active:bg-[#2c2c2e] transition-colors"
+      className='flex items-center gap-3 w-full px-4 py-[11px] bg-[#1c1c1e] first:rounded-t-[10px] last:rounded-b-[10px] active:bg-[#2c2c2e] transition-colors'
       whileTap={{ scale: 0.98 }}
     >
       <div
-        className="w-[29px] h-[29px] rounded-[6px] flex items-center justify-center"
+        className='w-[29px] h-[29px] rounded-[6px] flex items-center justify-center'
         style={{ background: iconBg }}
       >
-        <Icon className="w-[17px] h-[17px] text-white" strokeWidth={2} />
+        <Icon className='w-[17px] h-[17px] text-white' strokeWidth={2} />
       </div>
-      <span className="text-white text-[17px] flex-1 text-left">{label}</span>
+      <span className='text-white text-[17px] flex-1 text-left'>{label}</span>
       {showChevron && (
-        <ChevronRight className="w-5 h-5 text-[#48484a]" strokeWidth={2.5} />
+        <ChevronRight className='w-5 h-5 text-[#48484a]' strokeWidth={2.5} />
       )}
     </motion.button>
   )
 }
 
-// Playful floating heart animation
-function FloatingHearts() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(5)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute"
-          initial={{
-            x: 50 + Math.random() * 250,
-            y: 400 + Math.random() * 200,
-            scale: 0,
-            opacity: 0
-          }}
-          animate={{
-            y: -50,
-            scale: [0, 1, 0.8, 0],
-            opacity: [0, 0.6, 0.4, 0],
-          }}
-          transition={{
-            duration: 4 + Math.random() * 2,
-            repeat: Infinity,
-            delay: i * 1.5,
-            ease: 'easeOut',
-          }}
-        >
-          <Heart className="w-4 h-4 text-pink-400 fill-pink-400/50" />
-        </motion.div>
-      ))}
-    </div>
-  )
-}
 
 // Playful sparkle effect
 function SparkleEffect({ children }: { children: React.ReactNode }) {
