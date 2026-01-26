@@ -1,4 +1,4 @@
-import { ForwardRefExoticComponent, RefAttributes, useState } from 'react'
+import { ForwardRefExoticComponent, RefAttributes, useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ChevronLeft,
@@ -1176,16 +1176,55 @@ function ContactScreen({ onBack }: { onBack: () => void }) {
 export function PhoneContent() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home')
   const [direction, setDirection] = useState(1)
+  const currentScreenRef = useRef<Screen>('home')
+
+  // Set initial history state on mount
+  useEffect(() => {
+    // Replace current state with home screen state
+    window.history.replaceState({ screen: 'home' }, '')
+  }, [])
 
   const navigate = (screen: Screen) => {
+    if (currentScreenRef.current === screen) return // Prevent double navigation
+    currentScreenRef.current = screen
     setDirection(1)
     setCurrentScreen(screen)
+    // Push history entry for this screen
+    window.history.pushState({ screen }, '')
   }
 
   const goBack = () => {
+    if (currentScreenRef.current === 'home') return // Already home, do nothing
+    currentScreenRef.current = 'home'
     setDirection(-1)
     setCurrentScreen('home')
+    // Go back in history (won't trigger popstate handler due to ref check)
+    window.history.back()
   }
+
+  // Handle browser back button (only for actual browser back, not UI back)
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      // Get the screen from history state
+      const screen = (event.state?.screen as Screen) || 'home'
+
+      // Only update if screen actually changed (prevents double animation)
+      if (currentScreenRef.current === screen) return
+
+      if (screen === 'home') {
+        currentScreenRef.current = 'home'
+        setDirection(-1)
+        setCurrentScreen('home')
+      } else {
+        currentScreenRef.current = screen
+        setDirection(1)
+        setCurrentScreen(screen)
+      }
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
 
   const pageVariants = {
     initial: (direction: number) => ({
