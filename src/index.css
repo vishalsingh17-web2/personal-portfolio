@@ -32,7 +32,8 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply text-foreground antialiased;
+    background: transparent;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -42,7 +43,9 @@ html {
 }
 
 body {
-  overflow-x: hidden;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
 }
 
 /* Custom Scrollbar */

@@ -1,2 +1,2 @@
-export { NeuralNetworkBackground } from './NeuralNetworkBackground';
-export { SkillIcons } from './SkillIcons';
+
+export { IPhone3D } from './IPhone3D';
