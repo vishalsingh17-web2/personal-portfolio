@@ -1,7 +1,12 @@
 import { HeroWithPhone } from "./components/sections/HeroWithPhone";
-
+import { Analytics } from '@vercel/analytics/react'
 function App() {
-  return <HeroWithPhone />
+  return (
+    <>
+      <Analytics />
+      <HeroWithPhone />
+    </>
+  )
 }
 
 
