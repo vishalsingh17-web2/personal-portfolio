@@ -1,3 +1,8 @@
+import bestBuyLogo from '@/assets/best_buy.png'
+import affinsysLogo from '@/assets/affinsys.png'
+import treevedLogo from '@/assets/treeved.png'
+import cruvLogo from '@/assets/cruv.png'
+
 export interface Experience {
   title: string;
   company: string;
@@ -56,7 +61,7 @@ export const experiences: Experience[] = [
     title: 'Best Buy',
     company: 'Best Buy',
     companyUrl: 'https://www.linkedin.com/company/best-buy/mycompany/',
-    logo: 'https://media.licdn.com/dms/image/v2/D560BAQGT2K1dnyeIlA/company-logo_200_200/company-logo_200_200/0/1732018895513/best_buy_logo?e=1770854400&v=beta&t=totR254IIvMx5CybDAWW_G-eyBVQ9DWNxsLOm38-sKI',
+    logo: bestBuyLogo,
     role: 'Software Engineer 1',
     description: [
       'Worked with monorepo codebase using react native and NX',
@@ -93,7 +98,7 @@ export const experiences: Experience[] = [
     title: 'Affinsys AI Pvt Ltd.',
     company: 'Affinsys AI',
     companyUrl: 'https://www.linkedin.com/company/affinsys-ai/mycompany/',
-    logo: 'https://media.licdn.com/dms/image/v2/C560BAQG0Bazc7rI1eQ/company-logo_200_200/company-logo_200_200/0/1630617867380?e=1770854400&v=beta&t=ETNFTPRFJ9KuD_3n3_Hg0M4chGFAy-Uz6q-tf76cZx0',
+    logo: affinsysLogo,
     role: 'Software Developer',
     duration: 'Oct 2022 - Sept 2025',
     description: [
@@ -165,7 +170,7 @@ export const experiences: Experience[] = [
     title: 'TreeVed',
     company: 'TreeVed',
     companyUrl: 'https://www.linkedin.com/company/treeved-sarvlok/about/',
-    logo: 'https://media.licdn.com/dms/image/v2/C560BAQFkbUM7rG49Rw/company-logo_200_200/company-logo_200_200/0/1658988082992?e=1770854400&v=beta&t=tOfQ3HT8LnEmwa-4zF4ARC72azfwvtt6bTCg9kergNg',
+    logo: treevedLogo,
     role: 'Flutter Developer Intern',
     duration: 'Jan 2022 - Apr 2022',
     description: [
@@ -179,7 +184,7 @@ export const experiences: Experience[] = [
     title: 'Cruv',
     company: 'Cruv',
     companyUrl: 'https://www.linkedin.com/company/cruv/about/',
-    logo: 'https://media.licdn.com/dms/image/v2/C4D0BAQGQGClEa5MrMA/company-logo_200_200/company-logo_200_200/0/1669889801468/cruv_logo?e=1770854400&v=beta&t=FWQGlwTLofpZjT23udQTtYIZkdsC8toGmRIyuDWDr_U',
+    logo: cruvLogo,
     role: 'Flutter Developer Intern',
     duration: 'Nov 2021 - Jan 2022',
     description: [
@@ -265,6 +270,26 @@ export const projects: Project[] = [
     image: "/projects/chat-app.png",
   },
 ];
+
+export interface Education {
+  degree: string;
+  institution: string;
+  logo?: string;
+  duration: string;
+  description: string;
+  achievements?: string[];
+}
+
+export const education: Education[] = [
+  {
+    degree: 'B.Tech in Electronics and Communication Engineering',
+    institution: 'Vellore Institute of Technology (VIT), Vellore',
+    duration: '2019 - 2023', // update if different
+    description:
+      'Undergraduate program in Electronics and Communication Engineering.',
+    achievements: ['GPA: 9.09 / 10.0'],
+  },
+]
 
 export const navItems = [
   { label: "Home", href: "#home" },

@@ -1,9 +1,52 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Github, Linkedin, Twitter, Mail, MapPin } from 'lucide-react'
 import { personalInfo } from '@/data/portfolio-data'
 import { IPhone3D } from '@/components/visuals/IPhone3D'
+import { StarField } from '@/components/visuals/StarField'
 import { PhoneContent } from '@/components/phone/PhoneContent'
+
+// Roles for typewriter effect
+const ROLES = [
+  'Full Stack Mobile Developer',
+  'React Native Engineer',
+  'Flutter Developer',
+  'iOS & Android Builder',
+  'UI/UX Enthusiast',
+]
+
+function useTypewriter(words: string[], typingSpeed = 80, deletingSpeed = 50, pauseDuration = 1800) {
+  const [displayText, setDisplayText] = useState('')
+  const [wordIndex, setWordIndex] = useState(0)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const tick = useCallback(() => {
+    const currentWord = words[wordIndex]
+
+    if (!isDeleting) {
+      setDisplayText(currentWord.slice(0, displayText.length + 1))
+      if (displayText.length + 1 === currentWord.length) {
+        setTimeout(() => setIsDeleting(true), pauseDuration)
+        return
+      }
+    } else {
+      setDisplayText(currentWord.slice(0, displayText.length - 1))
+      if (displayText.length - 1 === 0) {
+        setIsDeleting(false)
+        setWordIndex((prev) => (prev + 1) % words.length)
+        return
+      }
+    }
+  }, [displayText, isDeleting, wordIndex, words, pauseDuration])
+
+  useEffect(() => {
+    const speed = isDeleting ? deletingSpeed : typingSpeed
+    const timer = setTimeout(tick, speed)
+    return () => clearTimeout(timer)
+  }, [tick, isDeleting, typingSpeed, deletingSpeed])
+
+  return displayText
+}
 
 // Mobile breakpoint - show full phone content directly
 const MOBILE_BREAKPOINT = 1024
@@ -11,6 +54,8 @@ const MOBILE_BREAKPOINT = 1024
 export function HeroWithPhone() {
   const [isMobile, setIsMobile] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const typedRole = useTypewriter(ROLES)
+  const spotlightRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const checkMobile = () => {
@@ -23,6 +68,29 @@ export function HeroWithPhone() {
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
+
+  // Mouse spotlight tracking (desktop only)
+  useEffect(() => {
+    if (isMobile) return
+    const handleMouseMove = (e: MouseEvent) => {
+      if (spotlightRef.current) {
+        spotlightRef.current.style.left = `${e.clientX}px`
+        spotlightRef.current.style.top = `${e.clientY}px`
+        spotlightRef.current.style.opacity = '1'
+      }
+    }
+    const handleMouseLeave = () => {
+      if (spotlightRef.current) {
+        spotlightRef.current.style.opacity = '0'
+      }
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseleave', handleMouseLeave)
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseleave', handleMouseLeave)
+    }
+  }, [isMobile])
 
   // Prevent hydration mismatch
   if (!mounted) {
@@ -44,27 +112,44 @@ export function HeroWithPhone() {
   // Desktop: Show full layout with 3D phone
   return (
     <div className="h-screen w-screen overflow-hidden bg-[#030712] relative">
-      {/* Ambient background effects */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[150px]" />
+      {/* Mouse spotlight glow */}
+      <div
+        ref={spotlightRef}
+        className="pointer-events-none fixed -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300"
+        style={{
+          zIndex: 1,
+          opacity: 0,
+          width: '600px',
+          height: '600px',
+          background: 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, rgba(139,92,246,0.04) 30%, transparent 70%)',
+          filter: 'blur(30px)',
+        }}
+      />
+
+      {/* Animated star field background */}
+      <StarField />
+
+      {/* Ambient background effects (subtle gradients behind stars) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 1 }}>
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-500/8 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/8 rounded-full blur-[100px]" />
       </div>
 
       {/* Grid pattern */}
       <div
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 opacity-20"
         style={{
           backgroundImage: `
             linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px)
           `,
           backgroundSize: '60px 60px',
+          zIndex: 1,
         }}
       />
 
       {/* Main content */}
-      <div className="relative h-full flex items-center">
+      <div className="relative h-full flex items-center" style={{ zIndex: 2 }}>
         <div className="container mx-auto px-12 h-full">
           <div className="grid grid-cols-2 gap-16 items-center h-full">
             {/* Left side - Text content */}
@@ -107,14 +192,19 @@ export function HeroWithPhone() {
                 <span className="text-blue-400">.</span>
               </motion.h1>
 
-              {/* Title */}
+              {/* Title - Typewriter */}
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.5 }}
-                className="text-3xl text-zinc-400 mb-6 font-light"
+                className="text-3xl text-zinc-400 mb-6 font-light h-[40px]"
               >
-                {personalInfo.title}
+                {typedRole}
+                <motion.span
+                  className="inline-block w-[2px] h-[1em] bg-blue-400 ml-1 align-middle"
+                  animate={{ opacity: [1, 0] }}
+                  transition={{ duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
+                />
               </motion.h2>
 
               {/* Description */}
@@ -180,7 +270,7 @@ export function HeroWithPhone() {
               className="h-full min-h-[500px] max-h-screen py-4"
             >
               <IPhone3D>
-                <PhoneContent />
+                <PhoneContent isDesktop />
               </IPhone3D>
             </motion.div>
           </div>

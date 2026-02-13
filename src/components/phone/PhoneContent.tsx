@@ -21,11 +21,17 @@ import {
   Eye,
   Star,
   CheckCircle2,
+  GraduationCap,
+  Award,
+  RefreshCw,
+  Share,
+  ArrowLeft,
+  ArrowRight,
   LucideProps,
 } from 'lucide-react'
-import { personalInfo, experiences, projects } from '@/data/portfolio-data'
+import { personalInfo, experiences, projects, skills, education } from '@/data/portfolio-data'
 
-type Screen = 'home' | 'about' | 'experience' | 'projects' | 'contact' | 'resume'
+type Screen = 'home' | 'about' | 'experience' | 'projects' | 'contact' | 'resume' | 'education'
 
 // iOS Status Bar - Authentic design
 function StatusBar() {
@@ -169,7 +175,7 @@ function SparkleEffect({ children }: { children: React.ReactNode }) {
 // ============ SCREENS ============
 
 // Home Screen - iOS Settings Style
-function HomeScreen({ navigate }: { navigate: (screen: Screen) => void }) {
+function HomeScreen({ navigate, isDesktop }: { navigate: (screen: Screen) => void; isDesktop?: boolean }) {
 
 
   return (
@@ -237,6 +243,12 @@ function HomeScreen({ navigate }: { navigate: (screen: Screen) => void }) {
               onClick={() => navigate('projects')}
             />
             <ListItem
+              icon={GraduationCap}
+              iconBg='#5AC8FA'
+              label='Education'
+              onClick={() => navigate('education')}
+            />
+            <ListItem
               icon={FileText}
               iconBg='#FF2D55'
               label='Resume'
@@ -251,35 +263,37 @@ function HomeScreen({ navigate }: { navigate: (screen: Screen) => void }) {
           </div>
         </motion.div>
 
-        {/* Status Section */}
-        <motion.div
-          className='mx-4 mb-6'
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <p className='text-[#8e8e93] text-[13px] uppercase px-4 mb-2'>
-            Status
-          </p>
+        {/* Status Section - only show on mobile (not redundant with desktop hero) */}
+        {!isDesktop && (
+          <motion.div
+            className='mx-4 mb-6'
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <p className='text-[#8e8e93] text-[13px] uppercase px-4 mb-2'>
+              Status
+            </p>
 
-          <div className='bg-[#1c1c1e] rounded-[10px] p-4'>
-            <div className='flex items-center gap-2 mb-2'>
-              <motion.span
-                className='w-2 h-2 bg-[#34C759] rounded-full'
-                animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-              <span className='text-[#34C759] text-[15px] font-medium'>
-                Available for work
-              </span>
-            </div>
+            <div className='bg-[#1c1c1e] rounded-[10px] p-4'>
+              <div className='flex items-center gap-2 mb-2'>
+                <motion.span
+                  className='w-2 h-2 bg-[#34C759] rounded-full'
+                  animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <span className='text-[#34C759] text-[15px] font-medium'>
+                  Available for work
+                </span>
+              </div>
 
-            <div className='flex items-center gap-1 text-[#8e8e93] text-[13px]'>
-              <MapPin className='w-3 h-3' />
-              <span>{personalInfo.location}</span>
+              <div className='flex items-center gap-1 text-[#8e8e93] text-[13px]'>
+                <MapPin className='w-3 h-3' />
+                <span>{personalInfo.location}</span>
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
       </div>
       <HomeIndicator />
     </div>
@@ -369,12 +383,71 @@ function AboutScreen({ onBack }: { onBack: () => void }) {
           </div>
         </motion.div>
 
+        {/* Skills - Name Tags */}
+        <motion.div
+          className="mb-4"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+        >
+          <h3 className="text-[#8e8e93] text-[13px] font-medium uppercase mb-3 px-1">Skills</h3>
+          <div className="bg-[#1c1c1e] rounded-[10px] p-4 space-y-3">
+            {(() => {
+              const categories = [...new Set(skills.map(s => s.category))]
+              const categoryColors: Record<string, string> = {
+                'Mobile': '#007AFF',
+                'Frontend': '#5856D6',
+                'Language': '#FF9500',
+                'Backend': '#34C759',
+                'State': '#AF52DE',
+                'Testing': '#FF2D55',
+                'Tools': '#5AC8FA',
+              }
+              return categories.map((cat, catIdx) => (
+                <motion.div
+                  key={cat}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + catIdx * 0.08 }}
+                >
+                  <p className="text-[#8e8e93] text-[11px] font-medium uppercase mb-1.5">{cat}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {skills.filter(s => s.category === cat).map((skill, i) => {
+                      const color = categoryColors[cat] || '#8e8e93'
+                      return (
+                        <motion.span
+                          key={skill.name}
+                          className="px-2.5 py-1 text-[12px] rounded-full font-medium"
+                          style={{
+                            backgroundColor: `${color}18`,
+                            color: color,
+                            border: `1px solid ${color}30`,
+                          }}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{
+                            duration: 0.3,
+                            delay: 0.45 + catIdx * 0.08 + i * 0.05,
+                            ease: 'easeOut',
+                          }}
+                        >
+                          {skill.name}
+                        </motion.span>
+                      )
+                    })}
+                  </div>
+                </motion.div>
+              ))
+            })()}
+          </div>
+        </motion.div>
+
         {/* Fun Facts - Playful */}
         <motion.div
           className="bg-[#1c1c1e] rounded-[10px] p-4"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.5 }}
         >
           <h3 className="text-[#8e8e93] text-[13px] font-medium uppercase mb-3">Fun Facts</h3>
           <div className="space-y-3">
@@ -1052,8 +1125,224 @@ function ResumeScreen({ onBack }: { onBack: () => void }) {
   )
 }
 
+// iOS Safari-style In-App Browser
+function InAppBrowser({ url, title, onClose }: { url: string; title: string; onClose: () => void }) {
+  const [phase, setPhase] = useState<'loading' | 'redirecting' | 'opened'>('loading')
+
+  // Extract domain for display
+  const displayUrl = (() => {
+    try {
+      const u = new URL(url)
+      return u.hostname.replace('www.', '')
+    } catch {
+      return url
+    }
+  })()
+
+  // Platform branding
+  const platformBranding: Record<string, { color: string; gradient: string }> = {
+    linkedin: { color: '#0A66C2', gradient: 'from-[#0A66C2] to-[#004182]' },
+    github: { color: '#f0f6fc', gradient: 'from-[#2b3137] to-[#0d1117]' },
+    twitter: { color: '#1d9bf0', gradient: 'from-[#1d9bf0] to-[#0c7abf]' },
+  }
+
+  const platform = Object.keys(platformBranding).find(p => url.toLowerCase().includes(p))
+  const branding = platform ? platformBranding[platform] : { color: '#007AFF', gradient: 'from-[#007AFF] to-[#0055cc]' }
+
+  // Open link and transition through phases
+  useEffect(() => {
+    const timer1 = setTimeout(() => {
+      setPhase('redirecting')
+      window.open(url, '_blank', 'noopener,noreferrer')
+    }, 800)
+
+    const timer2 = setTimeout(() => {
+      setPhase('opened')
+    }, 1600)
+
+    return () => {
+      clearTimeout(timer1)
+      clearTimeout(timer2)
+    }
+  }, [url])
+
+  // Icon for the contact (reuse the one from lucide)
+  const PlatformIcon = title === 'LinkedIn' ? Linkedin : title === 'GitHub' ? Github : title === 'Twitter' ? Twitter : Globe
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-50 flex flex-col bg-[#1c1c1e]"
+      initial={{ y: '100%' }}
+      animate={{ y: 0 }}
+      exit={{ y: '100%' }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+    >
+      {/* ── SFSafariViewController Top Bar ── */}
+      <div className="bg-[#2c2c2e]/95 backdrop-blur-xl flex-shrink-0">
+        {/* Grabber handle */}
+        <div className="flex justify-center pt-2 pb-1">
+          <div className="w-9 h-[5px] bg-[#48484a] rounded-full" />
+        </div>
+
+        {/* Top row: Done + URL + Reload */}
+        <div className="flex items-center px-4 pb-2.5 pt-1">
+          <motion.button
+            onClick={onClose}
+            className="text-[#007AFF] text-[17px] font-regular min-w-[50px] text-left"
+            whileTap={{ scale: 0.95 }}
+          >
+            Done
+          </motion.button>
+
+          {/* URL pill */}
+          <div className="flex-1 mx-2">
+            <div className="h-[36px] bg-[#1c1c1e]/80 rounded-full flex items-center justify-center px-4 gap-1.5">
+              {/* Lock icon */}
+              <svg width="11" height="13" viewBox="0 0 11 13" fill="none" className="flex-shrink-0">
+                <rect x="0.5" y="5" width="10" height="7.5" rx="2" fill="#8e8e93"/>
+                <path d="M3 5V3.5a2.5 2.5 0 015 0V5" stroke="#8e8e93" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+              </svg>
+              <span className="text-white text-[14px] truncate">{displayUrl}</span>
+            </div>
+          </div>
+
+          <motion.button
+            onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}
+            className="text-[#007AFF] min-w-[28px] flex items-center justify-center"
+            whileTap={{ scale: 0.95 }}
+          >
+            <RefreshCw className="w-[18px] h-[18px]" strokeWidth={2} />
+          </motion.button>
+        </div>
+
+        {/* Progress bar */}
+        <div className="h-[2px] w-full relative">
+          {phase === 'loading' && (
+            <motion.div
+              className="absolute left-0 top-0 h-full bg-[#007AFF]"
+              initial={{ width: '0%' }}
+              animate={{ width: '70%' }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+            />
+          )}
+          {phase === 'redirecting' && (
+            <motion.div
+              className="absolute left-0 top-0 h-full bg-[#007AFF]"
+              initial={{ width: '70%' }}
+              animate={{ width: '100%' }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* ── Content Area ── */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 relative overflow-hidden">
+        {/* Gradient background glow */}
+        <div
+          className={`absolute inset-0 bg-gradient-to-b ${branding.gradient} opacity-[0.07]`}
+        />
+
+        <motion.div
+          className="relative z-10 flex flex-col items-center text-center"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          {/* Platform icon */}
+          <motion.div
+            className="w-[72px] h-[72px] rounded-[18px] flex items-center justify-center mb-5"
+            style={{ backgroundColor: branding.color }}
+            animate={phase === 'loading' ? { scale: [1, 1.05, 1] } : {}}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            <PlatformIcon className="w-9 h-9 text-white" />
+          </motion.div>
+
+          {/* Phase text */}
+          <AnimatePresence mode="wait">
+            {phase === 'loading' && (
+              <motion.div key="loading" className="flex flex-col items-center" exit={{ opacity: 0, y: -10 }}>
+                <p className="text-white text-[20px] font-semibold mb-1.5">Opening {title}</p>
+                <p className="text-[#8e8e93] text-[15px]">Connecting to {displayUrl}...</p>
+                <motion.div
+                  className="mt-5 w-5 h-5 border-2 border-[#48484a] border-t-[#007AFF] rounded-full"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
+                />
+              </motion.div>
+            )}
+            {phase === 'redirecting' && (
+              <motion.div
+                key="redirecting"
+                className="flex flex-col items-center"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+              >
+                <p className="text-white text-[20px] font-semibold mb-1.5">Redirecting...</p>
+                <p className="text-[#8e8e93] text-[15px]">Opening in a new tab</p>
+              </motion.div>
+            )}
+            {phase === 'opened' && (
+              <motion.div
+                key="opened"
+                className="flex flex-col items-center"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+                  className="mb-3"
+                >
+                  <CheckCircle2 className="w-8 h-8 text-[#34C759]" />
+                </motion.div>
+                <p className="text-white text-[20px] font-semibold mb-1.5">Opened in New Tab</p>
+                <p className="text-[#8e8e93] text-[15px] mb-6">{displayUrl}</p>
+                <motion.button
+                  onClick={onClose}
+                  className="px-6 py-2.5 bg-[#007AFF] rounded-full text-white text-[15px] font-semibold"
+                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                >
+                  Return to Portfolio
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </div>
+
+      {/* ── Bottom Toolbar (iOS Safari) ── */}
+      <div className="bg-[#2c2c2e]/95 backdrop-blur-xl px-5 pt-2 pb-[28px] flex items-center justify-between flex-shrink-0">
+        <div className="flex items-center gap-7">
+          <button className="text-[#48484a]">
+            <ArrowLeft className="w-[22px] h-[22px]" strokeWidth={1.8} />
+          </button>
+          <button className="text-[#48484a]">
+            <ArrowRight className="w-[22px] h-[22px]" strokeWidth={1.8} />
+          </button>
+        </div>
+
+        <button className="text-[#007AFF]" onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}>
+          <Share className="w-[21px] h-[21px]" strokeWidth={1.8} />
+        </button>
+
+        {/* Tabs icon (grid) */}
+        <div className="w-[22px] h-[22px] border-[1.8px] border-[#48484a] rounded-[5px] flex items-center justify-center">
+          <span className="text-[#48484a] text-[11px] font-bold leading-none">1</span>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
 // Contact Screen
 function ContactScreen({ onBack }: { onBack: () => void }) {
+  const [browserUrl, setBrowserUrl] = useState<{ url: string; title: string } | null>(null)
+
   const contacts = [
     {
       icon: Mail,
@@ -1061,6 +1350,7 @@ function ContactScreen({ onBack }: { onBack: () => void }) {
       value: personalInfo.email,
       href: `mailto:${personalInfo.email}`,
       bgColor: '#007AFF',
+      openInBrowser: false, // mailto can't be iframed
     },
     {
       icon: Linkedin,
@@ -1068,6 +1358,7 @@ function ContactScreen({ onBack }: { onBack: () => void }) {
       value: 'Connect with me',
       href: personalInfo.social.linkedin,
       bgColor: '#0077B5',
+      openInBrowser: true,
     },
     {
       icon: Github,
@@ -1075,6 +1366,7 @@ function ContactScreen({ onBack }: { onBack: () => void }) {
       value: 'Check my code',
       href: personalInfo.social.github,
       bgColor: '#333333',
+      openInBrowser: true,
     },
     {
       icon: Twitter,
@@ -1082,11 +1374,20 @@ function ContactScreen({ onBack }: { onBack: () => void }) {
       value: 'Follow me',
       href: personalInfo.social.twitter,
       bgColor: '#1DA1F2',
+      openInBrowser: true,
     },
   ]
 
+  const handleContactClick = (contact: typeof contacts[0]) => {
+    if (contact.openInBrowser) {
+      setBrowserUrl({ url: contact.href, title: contact.label })
+    } else {
+      window.open(contact.href, '_blank')
+    }
+  }
+
   return (
-    <div className="h-full w-full flex flex-col bg-black overflow-hidden">
+    <div className="h-full w-full flex flex-col bg-black overflow-hidden relative">
       <StatusBar />
       <NavBarWithBack title="Contact" onBack={onBack} />
 
@@ -1123,15 +1424,13 @@ function ContactScreen({ onBack }: { onBack: () => void }) {
         {/* Contact Options */}
         <div className="bg-[#1c1c1e] rounded-[10px] divide-y divide-[#38383a]">
           {contacts.map((contact, index) => (
-            <motion.a
+            <motion.button
               key={contact.label}
-              href={contact.href}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => handleContactClick(contact)}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="flex items-center gap-3 p-3 active:bg-[#2c2c2e] transition-colors first:rounded-t-[10px] last:rounded-b-[10px]"
+              className="flex items-center gap-3 p-3 w-full active:bg-[#2c2c2e] transition-colors first:rounded-t-[10px] last:rounded-b-[10px]"
               whileTap={{ scale: 0.98 }}
             >
               <div
@@ -1140,12 +1439,16 @@ function ContactScreen({ onBack }: { onBack: () => void }) {
               >
                 <contact.icon className="w-5 h-5 text-white" />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 text-left">
                 <p className="text-white text-[17px] font-medium">{contact.label}</p>
                 <p className="text-[#8e8e93] text-[13px]">{contact.value}</p>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#48484a]" strokeWidth={2.5} />
-            </motion.a>
+              {contact.openInBrowser ? (
+                <ExternalLink className="w-4 h-4 text-[#48484a]" />
+              ) : (
+                <ChevronRight className="w-5 h-5 text-[#48484a]" strokeWidth={2.5} />
+              )}
+            </motion.button>
           ))}
         </div>
 
@@ -1167,13 +1470,124 @@ function ContactScreen({ onBack }: { onBack: () => void }) {
       </div>
 
       <HomeIndicator />
+
+      {/* In-App Browser Overlay */}
+      <AnimatePresence>
+        {browserUrl && (
+          <InAppBrowser
+            url={browserUrl.url}
+            title={browserUrl.title}
+            onClose={() => setBrowserUrl(null)}
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+// ============ EDUCATION SCREEN ============
+
+function EducationScreen({ onBack }: { onBack: () => void }) {
+  return (
+    <div className="h-full w-full flex flex-col bg-black overflow-hidden">
+      <StatusBar />
+      <NavBarWithBack title="Education" onBack={onBack} />
+
+      <div
+        className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 py-4 pb-20"
+        style={{
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'contain',
+          touchAction: 'pan-y',
+        }}
+      >
+        {/* Header */}
+        <motion.div
+          className="text-center mb-6"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <motion.div
+            className="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-[#5AC8FA] to-[#007AFF] flex items-center justify-center"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          >
+            <GraduationCap className="w-10 h-10 text-white" />
+          </motion.div>
+          <h2 className="text-white text-[22px] font-bold">Education</h2>
+          <p className="text-[#8e8e93] text-[15px]">Academic background</p>
+        </motion.div>
+
+        {/* Education Cards */}
+        <div className="space-y-4">
+          {education.map((edu, index) => (
+            <motion.div
+              key={index}
+              className="bg-[#1c1c1e] rounded-[16px] overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + index * 0.15 }}
+            >
+              <div
+                className="p-4"
+                style={{
+                  background: 'linear-gradient(135deg, #5AC8FA15 0%, #007AFF05 100%)',
+                  borderBottom: '1px solid #5AC8FA30',
+                }}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-11 h-11 rounded-[10px] bg-[#2c2c2e] flex items-center justify-center overflow-hidden flex-shrink-0">
+                    {edu.logo ? (
+                      <img src={edu.logo} alt={edu.institution} className="w-full h-full object-cover" />
+                    ) : (
+                      <GraduationCap className="w-5 h-5 text-[#5AC8FA]" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-white text-[15px] font-semibold leading-tight">{edu.degree}</h3>
+                    <p className="text-[#5AC8FA] text-[13px]">{edu.institution}</p>
+                    <p className="text-[#8e8e93] text-[12px]">{edu.duration}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 pt-3">
+                <p className="text-[#ebebf5] text-[14px] leading-relaxed mb-3">{edu.description}</p>
+
+                {edu.achievements && edu.achievements.length > 0 && (
+                  <div>
+                    <p className="text-[#8e8e93] text-[11px] font-medium uppercase mb-2">Achievements</p>
+                    <div className="space-y-2">
+                      {edu.achievements.map((achievement, i) => (
+                        <motion.div
+                          key={i}
+                          className="flex items-start gap-2 text-[13px]"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.4 + i * 0.1 }}
+                        >
+                          <Award className="w-4 h-4 text-[#FFD60A] flex-shrink-0 mt-0.5" />
+                          <span className="text-[#ebebf5]">{achievement}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      <HomeIndicator />
     </div>
   )
 }
 
 // ============ MAIN COMPONENT ============
 
-export function PhoneContent() {
+export function PhoneContent({ isDesktop = false }: { isDesktop?: boolean }) {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home')
   const [direction, setDirection] = useState(1)
   const currentScreenRef = useRef<Screen>('home')
@@ -1262,10 +1676,11 @@ export function PhoneContent() {
           }}
           className="absolute inset-0"
         >
-          {currentScreen === 'home' && <HomeScreen navigate={navigate} />}
+          {currentScreen === 'home' && <HomeScreen navigate={navigate} isDesktop={isDesktop} />}
           {currentScreen === 'about' && <AboutScreen onBack={goBack} />}
           {currentScreen === 'experience' && <ExperienceScreen onBack={goBack} />}
           {currentScreen === 'projects' && <ProjectsScreen onBack={goBack} />}
+          {currentScreen === 'education' && <EducationScreen onBack={goBack} />}
           {currentScreen === 'resume' && <ResumeScreen onBack={goBack} />}
           {currentScreen === 'contact' && <ContactScreen onBack={goBack} />}
         </motion.div>
