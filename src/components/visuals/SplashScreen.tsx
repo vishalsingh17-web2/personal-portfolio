@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
 interface SplashScreenProps {
   onComplete: () => void
@@ -8,8 +8,16 @@ interface SplashScreenProps {
 export function SplashScreen({ onComplete }: SplashScreenProps) {
   const [progress, setProgress] = useState(0)
   const [phase, setPhase] = useState<'loading' | 'reveal' | 'done'>('loading')
+  const shouldReduceMotion = useReducedMotion()
 
   useEffect(() => {
+    if (shouldReduceMotion) {
+      setProgress(100)
+      setPhase('done')
+      onComplete()
+      return
+    }
+
     // Simulate loading progress
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -24,9 +32,11 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
     }, 30)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [onComplete, shouldReduceMotion])
 
   useEffect(() => {
+    if (shouldReduceMotion) return
+
     if (progress >= 100) {
       setTimeout(() => setPhase('reveal'), 300)
       setTimeout(() => {
@@ -34,7 +44,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
         onComplete()
       }, 1200)
     }
-  }, [progress, onComplete])
+  }, [progress, onComplete, shouldReduceMotion])
 
   return (
     <AnimatePresence>

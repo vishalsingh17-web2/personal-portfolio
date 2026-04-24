@@ -1,6 +1,7 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Html, Environment, ContactShadows, Float } from '@react-three/drei'
-import { useRef, useState, useEffect, ReactNode } from 'react'
+import { Suspense, useRef, useState, useEffect, ReactNode } from 'react'
+import { useReducedMotion } from 'framer-motion'
 import * as THREE from 'three'
 
 // iPhone 16 Pro dimensions (scaled)
@@ -11,6 +12,20 @@ const CORNER_RADIUS = 0.45
 const SCREEN_BEZEL = 0.1
 const DYNAMIC_ISLAND_WIDTH = 0.8
 const DYNAMIC_ISLAND_HEIGHT = 0.18
+const SCREEN_WIDTH = PHONE_WIDTH - SCREEN_BEZEL * 2
+const SCREEN_HEIGHT = PHONE_HEIGHT - SCREEN_BEZEL * 2
+
+// Match the DOM overlay to the 3D glass aspect ratio instead of using legacy phone dimensions.
+const SCREEN_CONTENT_WIDTH = 390
+const SCREEN_CONTENT_HEIGHT = Math.round(
+  (SCREEN_HEIGHT / SCREEN_WIDTH) * SCREEN_CONTENT_WIDTH
+)
+const SCREEN_CONTENT_RADIUS = Math.round(
+  ((CORNER_RADIUS - 0.05) / SCREEN_WIDTH) * SCREEN_CONTENT_WIDTH
+)
+
+// One calibration value controls how much of the glass the DOM should fill.
+const SCREEN_CONTENT_SCALE = 0.294
 
 // Create rounded rectangle shape
 function createRoundedRectShape(width: number, height: number, radius: number) {
@@ -78,8 +93,8 @@ function IPhoneFrame() {
         <extrudeGeometry
           args={[
             createRoundedRectShape(
-              PHONE_WIDTH - SCREEN_BEZEL * 2,
-              PHONE_HEIGHT - SCREEN_BEZEL * 2,
+              SCREEN_WIDTH,
+              SCREEN_HEIGHT,
               CORNER_RADIUS - 0.05
             ),
             { depth: 0.001, bevelEnabled: false },
@@ -149,25 +164,26 @@ function IPhoneFrame() {
 function ScreenContent({ children }: { children: ReactNode }) {
   return (
     <Html
+      center
       transform
       position={[0, 0, 0.007]}
-      scale={0.29}
+      scale={SCREEN_CONTENT_SCALE}
       style={{
-        width: '375px',
-        height: '812px',
-        borderRadius: '40px',
+        width: `${SCREEN_CONTENT_WIDTH}px`,
+        height: `${SCREEN_CONTENT_HEIGHT}px`,
+        borderRadius: `${SCREEN_CONTENT_RADIUS}px`,
         overflow: 'hidden',
-        background: '#09090b',
+        background: '#000000',
         pointerEvents: 'auto',
       }}
     >
       <div
         style={{
-          width: '375px',
-          height: '812px',
+          width: `${SCREEN_CONTENT_WIDTH}px`,
+          height: `${SCREEN_CONTENT_HEIGHT}px`,
           overflow: 'hidden',
-          borderRadius: '40px',
-          background: '#09090b',
+          borderRadius: `${SCREEN_CONTENT_RADIUS}px`,
+          background: '#000000',
           position: 'relative',
         }}
       >
@@ -182,8 +198,11 @@ function InteractivePhone({ children }: { children: ReactNode }) {
   const groupRef = useRef<THREE.Group>(null)
   const [mouse, setMouse] = useState({ x: 0, y: 0 })
   const targetRotation = useRef({ x: 0, y: 0 })
+  const shouldReduceMotion = useReducedMotion()
 
   useEffect(() => {
+    if (shouldReduceMotion) return
+
     const handleMouseMove = (e: MouseEvent) => {
       setMouse({
         x: (e.clientX / window.innerWidth) * 2 - 1,
@@ -192,10 +211,16 @@ function InteractivePhone({ children }: { children: ReactNode }) {
     }
     window.addEventListener('mousemove', handleMouseMove)
     return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [])
+  }, [shouldReduceMotion])
 
   useFrame(() => {
     if (!groupRef.current) return
+
+    if (shouldReduceMotion) {
+      groupRef.current.rotation.x += (0 - groupRef.current.rotation.x) * 0.08
+      groupRef.current.rotation.y += (0 - groupRef.current.rotation.y) * 0.08
+      return
+    }
 
     // Smooth rotation based on mouse position
     targetRotation.current.y = mouse.x * 0.15
@@ -208,7 +233,11 @@ function InteractivePhone({ children }: { children: ReactNode }) {
   })
 
   return (
-    <Float speed={2} rotationIntensity={0.1} floatIntensity={0.3}>
+    <Float
+      speed={shouldReduceMotion ? 0 : 2}
+      rotationIntensity={shouldReduceMotion ? 0 : 0.1}
+      floatIntensity={shouldReduceMotion ? 0 : 0.3}
+    >
       <group ref={groupRef}>
         <IPhoneFrame />
         <ScreenContent>{children}</ScreenContent>
@@ -243,27 +272,29 @@ export function IPhone3D({ children, className = '' }: IPhone3DProps) {
         gl={{ antialias: true, alpha: true }}
         style={{ width: '100%', height: '100%' }}
       >
-        <ambientLight intensity={0.4} />
-        <spotLight
-          position={[5, 10, 5]}
-          angle={0.3}
-          penumbra={1}
-          intensity={1}
-          castShadow
-        />
-        <pointLight position={[-5, 5, 5]} intensity={0.5} color="#38bdf8" />
-        <pointLight position={[5, -5, 5]} intensity={0.3} color="#8b5cf6" />
+        <Suspense fallback={null}>
+          <ambientLight intensity={0.4} />
+          <spotLight
+            position={[5, 10, 5]}
+            angle={0.3}
+            penumbra={1}
+            intensity={1}
+            castShadow
+          />
+          <pointLight position={[-5, 5, 5]} intensity={0.5} color="#38bdf8" />
+          <pointLight position={[5, -5, 5]} intensity={0.3} color="#8b5cf6" />
 
-        <InteractivePhone>{children}</InteractivePhone>
+          <InteractivePhone>{children}</InteractivePhone>
 
-        <ContactShadows
-          position={[0, -3, 0]}
-          opacity={0.4}
-          scale={10}
-          blur={2}
-          far={4}
-        />
-        <Environment preset="city" />
+          <ContactShadows
+            position={[0, -3, 0]}
+            opacity={0.4}
+            scale={10}
+            blur={2}
+            far={4}
+          />
+          <Environment preset="city" />
+        </Suspense>
       </Canvas>
     </div>
   )

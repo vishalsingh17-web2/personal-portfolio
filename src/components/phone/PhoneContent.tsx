@@ -1,5 +1,6 @@
 import { ForwardRefExoticComponent, RefAttributes, useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { track } from '@vercel/analytics'
 import {
   ChevronLeft,
   ChevronRight,
@@ -30,6 +31,7 @@ import {
   LucideProps,
 } from 'lucide-react'
 import { personalInfo, experiences, projects, skills, education } from '@/data/portfolio-data'
+import { haptic } from '@/lib/utils'
 
 type Screen = 'home' | 'about' | 'experience' | 'projects' | 'contact' | 'resume' | 'education'
 
@@ -83,7 +85,7 @@ function NavBarWithBack({ title, onBack }: { title: string; onBack: () => void }
   return (
     <div className="pt-[47px]">
       <div className="h-[44px] flex items-center px-4 relative">
-        <button onClick={onBack} className="flex items-center text-[#007AFF] -ml-2 z-10">
+        <button onClick={onBack} className="flex items-center text-[#007AFF] -ml-2 z-10" aria-label={`Go back from ${title}`}>
           <ChevronLeft className="w-[28px] h-[28px] -mr-1" strokeWidth={2.5} />
           <span className="text-[17px]">Back</span>
         </button>
@@ -123,6 +125,7 @@ function ListItem({
   return (
     <motion.button
       onClick={onClick}
+      aria-label={label}
       className='flex items-center gap-3 w-full px-4 py-[11px] bg-[#1c1c1e] first:rounded-t-[10px] last:rounded-b-[10px] active:bg-[#2c2c2e] transition-colors'
       whileTap={{ scale: 0.98 }}
     >
@@ -176,6 +179,7 @@ function SparkleEffect({ children }: { children: React.ReactNode }) {
 
 // Home Screen - iOS Settings Style
 function HomeScreen({ navigate, isDesktop }: { navigate: (screen: Screen) => void; isDesktop?: boolean }) {
+  const shouldReduceMotion = useReducedMotion()
 
 
   return (
@@ -188,6 +192,7 @@ function HomeScreen({ navigate, isDesktop }: { navigate: (screen: Screen) => voi
           <SparkleEffect>
             <motion.button
               onClick={() => navigate('about')}
+              aria-label="View profile"
               className='w-full flex items-center gap-3 p-3 bg-[#1c1c1e] rounded-[12px] active:bg-[#2c2c2e] transition-colors'
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -195,8 +200,8 @@ function HomeScreen({ navigate, isDesktop }: { navigate: (screen: Screen) => voi
             >
               <motion.div
                 className='w-[60px] h-[60px] rounded-full bg-slate-600 flex items-center justify-center'
-                animate={{ rotate: [0, 5, -5, 0] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                animate={shouldReduceMotion ? undefined : { rotate: [0, 5, -5, 0] }}
+                transition={shouldReduceMotion ? undefined : { duration: 2, repeat: Infinity, repeatDelay: 3 }}
               >
                 <span className='text-white text-2xl font-semibold'>
                   {personalInfo.name[0]}
@@ -865,6 +870,8 @@ function ProjectsScreen({ onBack }: { onBack: () => void }) {
                           href={project.github}
                           target='_blank'
                           rel='noopener noreferrer'
+                          aria-label={`View ${project.title} source code on GitHub`}
+                          onClick={() => track('project_link_click', { project: project.title, type: 'github' })}
                           className='p-2 rounded-full bg-[#2c2c2e]'
                           whileTap={{ scale: 0.85 }}
                         >
@@ -876,6 +883,8 @@ function ProjectsScreen({ onBack }: { onBack: () => void }) {
                           href={project.link}
                           target='_blank'
                           rel='noopener noreferrer'
+                          aria-label={`Open ${project.title} live project`}
+                          onClick={() => track('project_link_click', { project: project.title, type: 'live' })}
                           className='p-2 rounded-full bg-[#2c2c2e]'
                           whileTap={{ scale: 0.85 }}
                         >
@@ -894,6 +903,7 @@ function ProjectsScreen({ onBack }: { onBack: () => void }) {
                   {/* Expandable highlights */}
                   <motion.button
                     onClick={() => setExpandedIndex(isExpanded ? null : index)}
+                    aria-label={`${isExpanded ? 'Collapse' : 'Expand'} highlights for ${project.title}`}
                     className='flex items-center gap-1 text-[14px] mb-3'
                     style={{ color }}
                     whileTap={{ scale: 0.95 }}
@@ -1073,6 +1083,8 @@ function ResumeScreen({ onBack }: { onBack: () => void }) {
             href={resumeUrl}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="View resume PDF"
+            onClick={() => track('resume_view')}
             className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-[#1c1c1e] rounded-[10px] text-white"
             whileTap={{ scale: 0.95 }}
           >
@@ -1083,6 +1095,8 @@ function ResumeScreen({ onBack }: { onBack: () => void }) {
           <motion.a
             href={resumeUrl}
             download="Vishal_Resume.pdf"
+            aria-label="Download resume PDF"
+            onClick={() => track('resume_download')}
             className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-[#007AFF] rounded-[10px] text-white"
             whileTap={{ scale: 0.95 }}
           >
@@ -1128,6 +1142,7 @@ function ResumeScreen({ onBack }: { onBack: () => void }) {
 // iOS Safari-style In-App Browser
 function InAppBrowser({ url, title, onClose }: { url: string; title: string; onClose: () => void }) {
   const [phase, setPhase] = useState<'loading' | 'redirecting' | 'opened'>('loading')
+  const shouldReduceMotion = useReducedMotion()
 
   // Extract domain for display
   const displayUrl = (() => {
@@ -1151,6 +1166,12 @@ function InAppBrowser({ url, title, onClose }: { url: string; title: string; onC
 
   // Open link and transition through phases
   useEffect(() => {
+    if (shouldReduceMotion) {
+      window.open(url, '_blank', 'noopener,noreferrer')
+      setPhase('opened')
+      return
+    }
+
     const timer1 = setTimeout(() => {
       setPhase('redirecting')
       window.open(url, '_blank', 'noopener,noreferrer')
@@ -1164,7 +1185,7 @@ function InAppBrowser({ url, title, onClose }: { url: string; title: string; onC
       clearTimeout(timer1)
       clearTimeout(timer2)
     }
-  }, [url])
+  }, [shouldReduceMotion, url])
 
   // Icon for the contact (reuse the one from lucide)
   const PlatformIcon = title === 'LinkedIn' ? Linkedin : title === 'GitHub' ? Github : title === 'Twitter' ? Twitter : Globe
@@ -1188,6 +1209,7 @@ function InAppBrowser({ url, title, onClose }: { url: string; title: string; onC
         <div className="flex items-center px-4 pb-2.5 pt-1">
           <motion.button
             onClick={onClose}
+            aria-label="Close in-app browser"
             className="text-[#007AFF] text-[17px] font-regular min-w-[50px] text-left"
             whileTap={{ scale: 0.95 }}
           >
@@ -1208,6 +1230,7 @@ function InAppBrowser({ url, title, onClose }: { url: string; title: string; onC
 
           <motion.button
             onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}
+            aria-label={`Open ${title} in a new tab`}
             className="text-[#007AFF] min-w-[28px] flex items-center justify-center"
             whileTap={{ scale: 0.95 }}
           >
@@ -1303,6 +1326,7 @@ function InAppBrowser({ url, title, onClose }: { url: string; title: string; onC
                 <p className="text-[#8e8e93] text-[15px] mb-6">{displayUrl}</p>
                 <motion.button
                   onClick={onClose}
+                  aria-label="Return to portfolio"
                   className="px-6 py-2.5 bg-[#007AFF] rounded-full text-white text-[15px] font-semibold"
                   whileTap={{ scale: 0.95 }}
                   whileHover={{ scale: 1.02 }}
@@ -1318,15 +1342,15 @@ function InAppBrowser({ url, title, onClose }: { url: string; title: string; onC
       {/* ── Bottom Toolbar (iOS Safari) ── */}
       <div className="bg-[#2c2c2e]/95 backdrop-blur-xl px-5 pt-2 pb-[28px] flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-7">
-          <button className="text-[#48484a]">
+          <button className="text-[#48484a]" aria-label="Previous page disabled">
             <ArrowLeft className="w-[22px] h-[22px]" strokeWidth={1.8} />
           </button>
-          <button className="text-[#48484a]">
+          <button className="text-[#48484a]" aria-label="Next page disabled">
             <ArrowRight className="w-[22px] h-[22px]" strokeWidth={1.8} />
           </button>
         </div>
 
-        <button className="text-[#007AFF]" onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}>
+        <button className="text-[#007AFF]" onClick={() => window.open(url, '_blank', 'noopener,noreferrer')} aria-label={`Share or open ${title} externally`}>
           <Share className="w-[21px] h-[21px]" strokeWidth={1.8} />
         </button>
 
@@ -1342,6 +1366,7 @@ function InAppBrowser({ url, title, onClose }: { url: string; title: string; onC
 // Contact Screen
 function ContactScreen({ onBack }: { onBack: () => void }) {
   const [browserUrl, setBrowserUrl] = useState<{ url: string; title: string } | null>(null)
+  const [copied, setCopied] = useState(false)
 
   const contacts = [
     {
@@ -1379,10 +1404,23 @@ function ContactScreen({ onBack }: { onBack: () => void }) {
   ]
 
   const handleContactClick = (contact: typeof contacts[0]) => {
+    track('contact_click', { label: contact.label })
     if (contact.openInBrowser) {
       setBrowserUrl({ url: contact.href, title: contact.label })
     } else {
       window.open(contact.href, '_blank')
+    }
+  }
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(personalInfo.email)
+      haptic([10, 20, 10])
+      setCopied(true)
+      track('email_copy')
+      window.setTimeout(() => setCopied(false), 1800)
+    } catch {
+      setCopied(false)
     }
   }
 
@@ -1427,6 +1465,7 @@ function ContactScreen({ onBack }: { onBack: () => void }) {
             <motion.button
               key={contact.label}
               onClick={() => handleContactClick(contact)}
+              aria-label={`Open ${contact.label}`}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
@@ -1443,6 +1482,20 @@ function ContactScreen({ onBack }: { onBack: () => void }) {
                 <p className="text-white text-[17px] font-medium">{contact.label}</p>
                 <p className="text-[#8e8e93] text-[13px]">{contact.value}</p>
               </div>
+              {contact.label === 'Email' && (
+                <motion.button
+                  type="button"
+                  aria-label="Copy email address"
+                  className="px-2 py-1 text-[11px] rounded-full bg-[#2c2c2e] text-[#007AFF] mr-1"
+                  whileTap={{ scale: 0.92 }}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    void handleCopyEmail()
+                  }}
+                >
+                  {copied ? 'Copied' : 'Copy'}
+                </motion.button>
+              )}
               {contact.openInBrowser ? (
                 <ExternalLink className="w-4 h-4 text-[#48484a]" />
               ) : (
@@ -1459,6 +1512,7 @@ function ContactScreen({ onBack }: { onBack: () => void }) {
           transition={{ delay: 0.5 }}
           className="mt-8 text-center"
         >
+          {copied && <p className="text-[#34C759] text-[12px] mb-3">Email copied to clipboard.</p>}
           <motion.p
             className="text-[#48484a] text-[13px]"
             animate={{ opacity: [0.5, 1, 0.5] }}
@@ -1600,6 +1654,8 @@ export function PhoneContent({ isDesktop = false }: { isDesktop?: boolean }) {
 
   const navigate = (screen: Screen) => {
     if (currentScreenRef.current === screen) return // Prevent double navigation
+    haptic(10)
+    track('screen_view', { screen, surface: isDesktop ? 'desktop-phone' : 'mobile-phone' })
     currentScreenRef.current = screen
     setDirection(1)
     setCurrentScreen(screen)
@@ -1609,6 +1665,8 @@ export function PhoneContent({ isDesktop = false }: { isDesktop?: boolean }) {
 
   const goBack = () => {
     if (currentScreenRef.current === 'home') return // Already home, do nothing
+    haptic([8, 20, 8])
+    track('screen_back', { from: currentScreenRef.current })
     currentScreenRef.current = 'home'
     setDirection(-1)
     setCurrentScreen('home')

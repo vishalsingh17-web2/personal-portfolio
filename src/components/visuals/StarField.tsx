@@ -1,5 +1,6 @@
 import { useRef, useMemo, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
+import { useReducedMotion } from 'framer-motion'
 import * as THREE from 'three'
 
 const STAR_COUNT = 400
@@ -7,6 +8,7 @@ const STAR_COUNT = 400
 function Stars() {
   const meshRef = useRef<THREE.Points>(null)
   const mouseRef = useRef({ x: 0, y: 0 })
+  const shouldReduceMotion = useReducedMotion()
 
   // Generate random star positions and sizes
   const { positions, sizes, colors } = useMemo(() => {
@@ -47,16 +49,24 @@ function Stars() {
 
   // Track mouse for parallax
   useEffect(() => {
+    if (shouldReduceMotion) return
+
     const handleMouse = (e: MouseEvent) => {
       mouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1
       mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1
     }
     window.addEventListener('mousemove', handleMouse)
     return () => window.removeEventListener('mousemove', handleMouse)
-  }, [])
+  }, [shouldReduceMotion])
 
   useFrame((state) => {
     if (!meshRef.current) return
+
+    if (shouldReduceMotion) {
+      meshRef.current.rotation.x = 0
+      meshRef.current.rotation.y = 0
+      return
+    }
 
     const time = state.clock.elapsedTime
 
@@ -106,6 +116,7 @@ function Stars() {
 // Shooting stars
 function ShootingStars() {
   const lineRef = useRef<THREE.Group>(null)
+  const shouldReduceMotion = useReducedMotion()
   const shootingStars = useMemo(() => {
     return Array.from({ length: 3 }, (_, i) => ({
       id: i,
@@ -119,6 +130,13 @@ function ShootingStars() {
 
   useFrame((state) => {
     if (!lineRef.current) return
+    if (shouldReduceMotion) {
+      lineRef.current.children.forEach((child) => {
+        child.visible = false
+      })
+      return
+    }
+
     const time = state.clock.elapsedTime
 
     lineRef.current.children.forEach((child, i) => {
@@ -154,6 +172,8 @@ function ShootingStars() {
 }
 
 export function StarField() {
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <div
       className="absolute pointer-events-none"
@@ -172,7 +192,7 @@ export function StarField() {
         style={{ background: 'transparent', width: '100%', height: '100%' }}
       >
         <Stars />
-        <ShootingStars />
+        {!shouldReduceMotion && <ShootingStars />}
       </Canvas>
     </div>
   )

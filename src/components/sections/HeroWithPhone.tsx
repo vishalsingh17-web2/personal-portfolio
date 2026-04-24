@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
+import { track } from '@vercel/analytics'
 import { Github, Linkedin, Twitter, Mail, MapPin } from 'lucide-react'
 import { personalInfo } from '@/data/portfolio-data'
 import { IPhone3D } from '@/components/visuals/IPhone3D'
@@ -15,7 +16,13 @@ const ROLES = [
   'UI/UX Enthusiast',
 ]
 
-function useTypewriter(words: string[], typingSpeed = 80, deletingSpeed = 50, pauseDuration = 1800) {
+function useTypewriter(
+  words: string[],
+  shouldReduceMotion: boolean,
+  typingSpeed = 80,
+  deletingSpeed = 50,
+  pauseDuration = 1800
+) {
   const [displayText, setDisplayText] = useState('')
   const [wordIndex, setWordIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -40,10 +47,15 @@ function useTypewriter(words: string[], typingSpeed = 80, deletingSpeed = 50, pa
   }, [displayText, isDeleting, wordIndex, words, pauseDuration])
 
   useEffect(() => {
+    if (shouldReduceMotion) {
+      setDisplayText(words[0] ?? '')
+      return
+    }
+
     const speed = isDeleting ? deletingSpeed : typingSpeed
     const timer = setTimeout(tick, speed)
     return () => clearTimeout(timer)
-  }, [tick, isDeleting, typingSpeed, deletingSpeed])
+  }, [deletingSpeed, isDeleting, shouldReduceMotion, tick, typingSpeed, words])
 
   return displayText
 }
@@ -54,7 +66,8 @@ const MOBILE_BREAKPOINT = 1024
 export function HeroWithPhone() {
   const [isMobile, setIsMobile] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const typedRole = useTypewriter(ROLES)
+  const shouldReduceMotion = useReducedMotion() ?? false
+  const typedRole = useTypewriter(ROLES, shouldReduceMotion)
   const spotlightRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -71,7 +84,7 @@ export function HeroWithPhone() {
 
   // Mouse spotlight tracking (desktop only)
   useEffect(() => {
-    if (isMobile) return
+    if (isMobile || shouldReduceMotion) return
     const handleMouseMove = (e: MouseEvent) => {
       if (spotlightRef.current) {
         spotlightRef.current.style.left = `${e.clientX}px`
@@ -90,7 +103,7 @@ export function HeroWithPhone() {
       window.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseleave', handleMouseLeave)
     }
-  }, [isMobile])
+  }, [isMobile, shouldReduceMotion])
 
   // Prevent hydration mismatch
   if (!mounted) {
@@ -236,6 +249,7 @@ export function HeroWithPhone() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => track('desktop_social_click', { platform: social.label })}
                     className="p-3 rounded-xl bg-zinc-900/80 border border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800 transition-all group backdrop-blur-sm"
                     whileHover={{ y: -3, scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
