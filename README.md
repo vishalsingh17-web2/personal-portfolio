@@ -14,23 +14,28 @@ An interactive developer portfolio built as an iOS-style experience. On desktop,
 
 - 3D iPhone 16 Pro model with realistic titanium frame, dynamic island, camera bump and side buttons
 - Interactive HTML overlay (portfolio content) synchronized with the 3D phone geometry
-- Mouse-tracked spotlight and floating physics on desktop
-- Animated star field background
-- iOS Settings-style navigation with screen transitions
+- Mouse-tracked spotlight and phone motion on desktop; rendering settles when idle and pauses in hidden tabs
+- Lightweight CSS star field background
+- iOS Settings-style grouped navigation, large titles, edge-swipe back, and reduced-motion-aware transitions
 - Sections: About, Experience, Projects, Education, Resume, Contact
-- Typewriter role cycling on the desktop hero
+- Stable desktop role heading and a View projects action that opens the phone’s Projects screen
 - iOS status bar with live clock
-- In-app browser simulation for social links
-- Fully responsive — mobile shows the phone UI fullscreen, desktop shows the 3D scene
+- Direct social links, email actions, and clipboard copy feedback
+- Fully responsive — mobile shows the phone UI fullscreen without downloading Three.js; desktop loads the 3D scene separately
 
 ## Getting Started
 
+Requires **Node.js 26.13.0 LTS** and **pnpm 8.15.7**. The runtime is pinned in `.nvmrc` and `.node-version`.
+
 ```bash
-pnpm install
+nvm install
+nvm use
+corepack enable
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Build for production:
+Build for production (includes a check that 3D dependencies stay out of the mobile bundle):
 
 ```bash
 pnpm build
@@ -40,7 +45,5 @@ pnpm preview
 ## Customisation
 
 All content lives in `src/data/portfolio-data.ts` — update `personalInfo`, `experiences`, `projects`, `skills`, and `education` there. No other files need to change for content updates.
-
-To add a profile photo, import your image in `portfolio-data.ts` and set it as `personalInfo.photo`.
 
 Place your resume PDF at `public/resume.pdf` to enable the Resume screen download/view buttons.

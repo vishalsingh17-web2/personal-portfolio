@@ -109,7 +109,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
               {[...Array(6)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute w-1 h-1 rounded-full bg-blue-400/60"
+                  className="absolute w-1 h-1 rounded-full bg-[var(--apple-blue)] opacity-60"
                   style={{
                     top: '50%',
                     left: '50%',
@@ -138,7 +138,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
               transition={{ delay: phase === 'reveal' ? 0 : 0.5, duration: 0.5 }}
             >
               <h1 className="text-2xl font-bold text-white tracking-tight mb-1">
-                Vishal<span className="text-blue-400">.</span>
+                Vishal<span className="text-[var(--apple-blue)]">.</span>
               </h1>
               <p className="text-sm text-zinc-500">Portfolio</p>
             </motion.div>

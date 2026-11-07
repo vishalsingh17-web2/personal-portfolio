@@ -1,6 +1,6 @@
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Html, Environment, ContactShadows, Float } from '@react-three/drei'
-import { Suspense, useRef, useState, useEffect, ReactNode } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Html } from '@react-three/drei/web/Html'
+import { useRef, useState, useEffect, useMemo, ReactNode } from 'react'
 import { useReducedMotion } from 'framer-motion'
 import * as THREE from 'three'
 
@@ -50,7 +50,7 @@ function createRoundedRectShape(width: number, height: number, radius: number) {
 function IPhoneFrame() {
   const frameRef = useRef<THREE.Group>(null)
 
-  const frameShape = createRoundedRectShape(PHONE_WIDTH, PHONE_HEIGHT, CORNER_RADIUS)
+  const frameShape = useMemo(() => createRoundedRectShape(PHONE_WIDTH, PHONE_HEIGHT, CORNER_RADIUS), [])
 
   const extrudeSettings = {
     steps: 1,
@@ -67,9 +67,9 @@ function IPhoneFrame() {
       <mesh position={[0, 0, -PHONE_DEPTH / 2]}>
         <extrudeGeometry args={[frameShape, extrudeSettings]} />
         <meshStandardMaterial
-          color="#1a1a1a"
-          metalness={0.9}
-          roughness={0.1}
+          color="#36383d"
+          metalness={0.75}
+          roughness={0.35}
         />
       </mesh>
 
@@ -82,9 +82,9 @@ function IPhoneFrame() {
           ]}
         />
         <meshStandardMaterial
-          color="#3d3d3d"
-          metalness={1}
-          roughness={0.2}
+          color="#747a84"
+          metalness={0.8}
+          roughness={0.3}
         />
       </mesh>
 
@@ -100,15 +100,7 @@ function IPhoneFrame() {
             { depth: 0.001, bevelEnabled: false },
           ]}
         />
-        <meshPhysicalMaterial
-          color="#000000"
-          metalness={0}
-          roughness={0}
-          transmission={0.1}
-          thickness={0.5}
-          clearcoat={1}
-          clearcoatRoughness={0}
-        />
+        <meshStandardMaterial color="#000000" metalness={0} roughness={0.35} />
       </mesh>
 
       {/* Dynamic Island */}
@@ -140,21 +132,21 @@ function IPhoneFrame() {
       {/* Power button */}
       <mesh position={[PHONE_WIDTH / 2 + 0.02, 0.8, -PHONE_DEPTH / 2]}>
         <boxGeometry args={[0.03, 0.4, 0.08]} />
-        <meshStandardMaterial color="#3d3d3d" metalness={1} roughness={0.2} />
+        <meshStandardMaterial color="#747a84" metalness={1} roughness={0.2} />
       </mesh>
       {/* Volume buttons */}
       <mesh position={[-PHONE_WIDTH / 2 - 0.02, 0.9, -PHONE_DEPTH / 2]}>
         <boxGeometry args={[0.03, 0.25, 0.08]} />
-        <meshStandardMaterial color="#3d3d3d" metalness={1} roughness={0.2} />
+        <meshStandardMaterial color="#747a84" metalness={1} roughness={0.2} />
       </mesh>
       <mesh position={[-PHONE_WIDTH / 2 - 0.02, 0.5, -PHONE_DEPTH / 2]}>
         <boxGeometry args={[0.03, 0.25, 0.08]} />
-        <meshStandardMaterial color="#3d3d3d" metalness={1} roughness={0.2} />
+        <meshStandardMaterial color="#747a84" metalness={1} roughness={0.2} />
       </mesh>
       {/* Action button */}
       <mesh position={[-PHONE_WIDTH / 2 - 0.02, 1.3, -PHONE_DEPTH / 2]}>
         <boxGeometry args={[0.03, 0.12, 0.08]} />
-        <meshStandardMaterial color="#3d3d3d" metalness={1} roughness={0.2} />
+        <meshStandardMaterial color="#747a84" metalness={1} roughness={0.2} />
       </mesh>
     </group>
   )
@@ -175,6 +167,7 @@ function ScreenContent({ children }: { children: ReactNode }) {
         overflow: 'hidden',
         background: '#000000',
         pointerEvents: 'auto',
+        boxShadow: '0 0 0 3px #15171b, 0 0 0 4px #626974, 0 24px 60px rgba(0,0,0,0.55)',
       }}
     >
       <div
@@ -193,108 +186,90 @@ function ScreenContent({ children }: { children: ReactNode }) {
   )
 }
 
-// Interactive Phone with mouse tracking
-function InteractivePhone({ children }: { children: ReactNode }) {
+// Mouse input updates refs rather than rebuilding geometry on every pointer move.
+function InteractivePhone({ children, visible }: { children: ReactNode; visible: boolean }) {
   const groupRef = useRef<THREE.Group>(null)
-  const [mouse, setMouse] = useState({ x: 0, y: 0 })
-  const targetRotation = useRef({ x: 0, y: 0 })
-  const shouldReduceMotion = useReducedMotion()
+  const mouse = useRef({ x: 0, y: 0 })
+  const activeUntil = useRef(0)
+  const reduceMotion = useReducedMotion()
+  const invalidate = useThree(state => state.invalidate)
 
   useEffect(() => {
-    if (shouldReduceMotion) return
+    if (!visible) return
+    activeUntil.current = performance.now() + 1200
+    invalidate()
+    if (reduceMotion) return
 
-    const handleMouseMove = (e: MouseEvent) => {
-      setMouse({
-        x: (e.clientX / window.innerWidth) * 2 - 1,
-        y: -(e.clientY / window.innerHeight) * 2 + 1,
-      })
+    const wake = () => {
+      activeUntil.current = performance.now() + 1200
+      invalidate()
     }
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [shouldReduceMotion])
+    const move = (event: MouseEvent) => {
+      mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1
+      mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1
+      wake()
+    }
+    const leave = () => {
+      mouse.current = { x: 0, y: 0 }
+      wake()
+    }
+    window.addEventListener('mousemove', move)
+    document.addEventListener('mouseleave', leave)
+    return () => {
+      window.removeEventListener('mousemove', move)
+      document.removeEventListener('mouseleave', leave)
+    }
+  }, [invalidate, reduceMotion, visible])
 
-  useFrame(() => {
-    if (!groupRef.current) return
-
-    if (shouldReduceMotion) {
-      groupRef.current.rotation.x += (0 - groupRef.current.rotation.x) * 0.08
-      groupRef.current.rotation.y += (0 - groupRef.current.rotation.y) * 0.08
+  useFrame((state, delta) => {
+    const group = groupRef.current
+    if (!group || !visible) return
+    if (reduceMotion) {
+      group.rotation.set(0, 0, 0)
+      group.position.y = 0
       return
     }
+    const active = performance.now() < activeUntil.current
+    const targetX = mouse.current.y * 0.1
+    const targetY = mouse.current.x * 0.15
+    const targetBob = active ? Math.sin(state.clock.elapsedTime * 0.75) * 0.025 : 0
+    const ease = 1 - Math.exp(-8 * Math.min(delta, 0.05))
+    group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, targetX, ease)
+    group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, targetY, ease)
+    group.position.y = THREE.MathUtils.lerp(group.position.y, targetBob, ease)
 
-    // Smooth rotation based on mouse position
-    targetRotation.current.y = mouse.x * 0.15
-    targetRotation.current.x = mouse.y * 0.1
-
-    groupRef.current.rotation.y +=
-      (targetRotation.current.y - groupRef.current.rotation.y) * 0.05
-    groupRef.current.rotation.x +=
-      (targetRotation.current.x - groupRef.current.rotation.x) * 0.05
+    // Settle after interaction, then stop requesting frames while idle.
+    if (active || Math.abs(group.rotation.x - targetX) > 0.0001 ||
+      Math.abs(group.rotation.y - targetY) > 0.0001 || Math.abs(group.position.y) > 0.0001) invalidate()
   })
 
-  return (
-    <Float
-      speed={shouldReduceMotion ? 0 : 2}
-      rotationIntensity={shouldReduceMotion ? 0 : 0.1}
-      floatIntensity={shouldReduceMotion ? 0 : 0.3}
-    >
-      <group ref={groupRef}>
-        <IPhoneFrame />
-        <ScreenContent>{children}</ScreenContent>
-      </group>
-    </Float>
-  )
+  return <group ref={groupRef}><IPhoneFrame /><ScreenContent>{children}</ScreenContent></group>
 }
 
-// Main Export
 interface IPhone3DProps {
   children: ReactNode
   className?: string
 }
 
 export function IPhone3D({ children, className = '' }: IPhone3DProps) {
-  const [isMobile, setIsMobile] = useState(false)
-
+  const [visible, setVisible] = useState(() => !document.hidden)
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
+    const update = () => setVisible(!document.hidden)
+    document.addEventListener('visibilitychange', update)
+    return () => document.removeEventListener('visibilitychange', update)
   }, [])
 
   return (
     <div className={`w-full h-full bg-transparent ${className}`}>
-      <Canvas
-        camera={{ position: [0, 0, isMobile ? 9.5 : 8], fov: isMobile ? 50 : 45 }}
-        dpr={[1, 2]}
-        gl={{ antialias: true, alpha: true }}
-        style={{ width: '100%', height: '100%' }}
-      >
-        <Suspense fallback={null}>
-          <ambientLight intensity={0.4} />
-          <spotLight
-            position={[5, 10, 5]}
-            angle={0.3}
-            penumbra={1}
-            intensity={1}
-            castShadow
-          />
-          <pointLight position={[-5, 5, 5]} intensity={0.5} color="#38bdf8" />
-          <pointLight position={[5, -5, 5]} intensity={0.3} color="#8b5cf6" />
-
-          <InteractivePhone>{children}</InteractivePhone>
-
-          <ContactShadows
-            position={[0, -3, 0]}
-            opacity={0.4}
-            scale={10}
-            blur={2}
-            far={4}
-          />
-          <Environment preset="city" />
-        </Suspense>
+      <Canvas camera={{ position: [0, 0, 8], fov: 45 }}
+        dpr={[1, 1.5]} frameloop={visible ? 'demand' : 'never'}
+        gl={{ antialias: true, alpha: true, powerPreference: 'low-power' }}
+        style={{ width: '100%', height: '100%' }}>
+        <ambientLight intensity={0.75} />
+        <spotLight position={[5, 10, 5]} angle={0.3} penumbra={1} intensity={1} />
+        <directionalLight position={[-4, 5, 6]} intensity={2.5} color="#e3e9f2" />
+        <directionalLight position={[4, -2, 3]} intensity={1.2} color="#ffffff" />
+        <InteractivePhone visible={visible}>{children}</InteractivePhone>
       </Canvas>
     </div>
   )

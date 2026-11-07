@@ -1,64 +1,12 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { track } from '@vercel/analytics'
-import { Github, Linkedin, Twitter, Mail, MapPin } from 'lucide-react'
+import { Github, Linkedin, Twitter, Mail, MapPin, ArrowRight } from 'lucide-react'
 import { personalInfo } from '@/data/portfolio-data'
-import { IPhone3D } from '@/components/visuals/IPhone3D'
 import { StarField } from '@/components/visuals/StarField'
 import { PhoneContent } from '@/components/phone/PhoneContent'
 
-// Roles for typewriter effect
-const ROLES = [
-  'Full Stack Mobile Developer',
-  'React Native Engineer',
-  'Flutter Developer',
-  'iOS & Android Builder',
-  'UI/UX Enthusiast',
-]
-
-function useTypewriter(
-  words: string[],
-  shouldReduceMotion: boolean,
-  typingSpeed = 80,
-  deletingSpeed = 50,
-  pauseDuration = 1800
-) {
-  const [displayText, setDisplayText] = useState('')
-  const [wordIndex, setWordIndex] = useState(0)
-  const [isDeleting, setIsDeleting] = useState(false)
-
-  const tick = useCallback(() => {
-    const currentWord = words[wordIndex]
-
-    if (!isDeleting) {
-      setDisplayText(currentWord.slice(0, displayText.length + 1))
-      if (displayText.length + 1 === currentWord.length) {
-        setTimeout(() => setIsDeleting(true), pauseDuration)
-        return
-      }
-    } else {
-      setDisplayText(currentWord.slice(0, displayText.length - 1))
-      if (displayText.length - 1 === 0) {
-        setIsDeleting(false)
-        setWordIndex((prev) => (prev + 1) % words.length)
-        return
-      }
-    }
-  }, [displayText, isDeleting, wordIndex, words, pauseDuration])
-
-  useEffect(() => {
-    if (shouldReduceMotion) {
-      setDisplayText(words[0] ?? '')
-      return
-    }
-
-    const speed = isDeleting ? deletingSpeed : typingSpeed
-    const timer = setTimeout(tick, speed)
-    return () => clearTimeout(timer)
-  }, [deletingSpeed, isDeleting, shouldReduceMotion, tick, typingSpeed, words])
-
-  return displayText
-}
+const DesktopPhone = lazy(() => import('@/components/visuals/DesktopPhone'))
 
 // Mobile breakpoint - show full phone content directly
 const MOBILE_BREAKPOINT = 1024
@@ -67,7 +15,7 @@ export function HeroWithPhone() {
   const [isMobile, setIsMobile] = useState(false)
   const [mounted, setMounted] = useState(false)
   const shouldReduceMotion = useReducedMotion() ?? false
-  const typedRole = useTypewriter(ROLES, shouldReduceMotion)
+  const [projectsRequest, setProjectsRequest] = useState(0)
   const spotlightRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -134,7 +82,7 @@ export function HeroWithPhone() {
           opacity: 0,
           width: '600px',
           height: '600px',
-          background: 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, rgba(139,92,246,0.04) 30%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(0,145,255,0.035) 0%, rgba(0,145,255,0.015) 30%, transparent 70%)',
           filter: 'blur(30px)',
         }}
       />
@@ -142,31 +90,12 @@ export function HeroWithPhone() {
       {/* Animated star field background */}
       <StarField />
 
-      {/* Ambient background effects (subtle gradients behind stars) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 1 }}>
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-500/8 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/8 rounded-full blur-[100px]" />
-      </div>
-
-      {/* Grid pattern */}
-      <div
-        className="absolute inset-0 opacity-20"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px)
-          `,
-          backgroundSize: '60px 60px',
-          zIndex: 1,
-        }}
-      />
-
       {/* Main content */}
       <div className="relative h-full flex items-center" style={{ zIndex: 2 }}>
         <div className="container mx-auto px-12 h-full">
-          <div className="grid grid-cols-2 gap-16 items-center h-full">
+          <div className="desktop-hero-grid">
             {/* Left side - Text content */}
-            <div className="text-left">
+            <div className="desktop-hero-copy">
               {/* Status Badge */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -174,13 +103,13 @@ export function HeroWithPhone() {
                 transition={{ delay: 0.2, duration: 0.5 }}
                 className="flex items-center gap-2 mb-6"
               >
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-800 backdrop-blur-sm">
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-sm text-zinc-400">Available for work</span>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-[var(--apple-blue)] rounded-full" />
+                  <span className="text-sm text-zinc-300">Available for work</span>
                 </div>
-                <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-800 backdrop-blur-sm">
+                <div className="flex items-center gap-1 border-l border-zinc-700 pl-4 ml-2">
                   <MapPin className="w-3 h-3 text-zinc-500" />
-                  <span className="text-sm text-zinc-400">{personalInfo.location}</span>
+                  <span className="text-sm text-zinc-300">{personalInfo.location}</span>
                 </div>
               </motion.div>
 
@@ -189,7 +118,7 @@ export function HeroWithPhone() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
-                className="text-zinc-400 text-lg mb-3"
+                className="text-zinc-300 text-lg mb-3"
               >
                 Hello, I'm
               </motion.p>
@@ -199,25 +128,20 @@ export function HeroWithPhone() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
-                className="text-7xl font-bold mb-4 tracking-tight"
+                className="desktop-hero-name font-bold mb-5 tracking-tight"
               >
                 <span className="text-white">{personalInfo.name}</span>
-                <span className="text-blue-400">.</span>
+                <span className="text-[var(--apple-blue)]">.</span>
               </motion.h1>
 
-              {/* Title - Typewriter */}
+              {/* Primary role */}
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.5 }}
-                className="text-3xl text-zinc-400 mb-6 font-light h-[40px]"
+                className="text-3xl text-zinc-200 mb-6 font-normal min-h-[40px]"
               >
-                {typedRole}
-                <motion.span
-                  className="inline-block w-[2px] h-[1em] bg-blue-400 ml-1 align-middle"
-                  animate={{ opacity: [1, 0] }}
-                  transition={{ duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
-                />
+                React Native Engineer
               </motion.h2>
 
               {/* Description */}
@@ -225,11 +149,28 @@ export function HeroWithPhone() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
-                className="text-lg text-zinc-500 max-w-xl mb-8 leading-relaxed"
+                className="text-lg text-zinc-300 max-w-lg mb-8 leading-[1.8]"
               >
-                {personalInfo.tagline}. Explore my work by interacting with the
-                phone on the right.
+                {personalInfo.tagline.split(/(React Native|Best Buy)/g).map((part, index) =>
+                  part === 'React Native' || part === 'Best Buy'
+                    ? <strong key={index} className="font-semibold text-zinc-100">{part}</strong>
+                    : part
+                )}.
               </motion.p>
+
+              <motion.button
+                type="button"
+                className="desktop-projects-action"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.65, duration: 0.4 }}
+                onClick={() => {
+                  track('hero_projects_click')
+                  setProjectsRequest(request => request + 1)
+                }}
+              >
+                View projects <ArrowRight size={18} aria-hidden="true" />
+              </motion.button>
 
               {/* Social Links */}
               <motion.div
@@ -255,7 +196,7 @@ export function HeroWithPhone() {
                     whileTap={{ scale: 0.95 }}
                     aria-label={social.label}
                   >
-                    <social.icon className="w-5 h-5 text-zinc-400 group-hover:text-white transition-colors" />
+                    <social.icon className="w-5 h-5 text-zinc-300 group-hover:text-white transition-colors" />
                   </motion.a>
                 ))}
               </motion.div>
@@ -265,14 +206,9 @@ export function HeroWithPhone() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.2, duration: 0.5 }}
-                className="mt-8 text-xs text-zinc-600"
+                className="mt-7 text-sm text-zinc-400 leading-relaxed"
               >
-                <span className="inline-flex items-center gap-2">
-                  <span className="w-4 h-4 border border-zinc-700 rounded flex items-center justify-center text-[10px]">
-                    ↔
-                  </span>
-                  Move your mouse to interact with the phone
-                </span>
+                Choose a section on the phone to explore my work.
               </motion.p>
             </div>
 
@@ -281,11 +217,16 @@ export function HeroWithPhone() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3, duration: 0.8, ease: 'easeOut' }}
-              className="h-full min-h-[500px] max-h-screen py-4"
+              className="desktop-phone-stage"
             >
-              <IPhone3D>
-                <PhoneContent isDesktop />
-              </IPhone3D>
+              <Suspense fallback={
+                <div className="phone-loading" role="status">
+                  <img src="/illustrations/overview.svg" alt="" width="52" height="56" />
+                  <span>Opening overview…</span>
+                </div>
+              }>
+                <DesktopPhone projectsRequest={projectsRequest} />
+              </Suspense>
             </motion.div>
           </div>
         </div>

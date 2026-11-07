@@ -10,19 +10,20 @@
     --card-foreground: 0 0% 95%;
     --popover: 0 0% 7%;
     --popover-foreground: 0 0% 95%;
-    --primary: 217 91% 60%;
+    --apple-blue: #0091ff;
+    --primary: 206 100% 50%;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 12%;
     --secondary-foreground: 0 0% 95%;
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 55%;
-    --accent: 217 91% 60%;
+    --accent: 206 100% 50%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 15%;
     --input: 0 0% 15%;
-    --ring: 217 91% 60%;
+    --ring: 206 100% 50%;
     --radius: 0.5rem;
   }
 }
@@ -168,3 +169,193 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* One shared palette and spacing scale for every screen inside the phone. */
+.portfolio-surface {
+  --ios-bg: #09090b;
+  --ios-card: #242428;
+  --ios-raised: #2d2d33;
+  --ios-line: #36363e;
+  --ios-text: #f4f4f7;
+  --ios-body: #c2c2cc;
+  --ios-secondary: #a4a4b1;
+  --ios-blue: var(--apple-blue);
+  --ios-action: var(--apple-blue);
+  --ios-inset: 20px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  container-type: inline-size;
+  color: var(--ios-text);
+  background: var(--ios-bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+  -webkit-tap-highlight-color: transparent;
+}
+.ios-screen-container { position: absolute; inset: 0; }
+.ios-screen { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+.ios-status { height: 47px; flex: 0 0 47px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 29px 5px; font-size: 14px; font-weight: 600; }
+.ios-status-signals { display: flex; gap: 6px; align-items: center; padding-bottom: 3px; }
+.ios-battery { display: inline-flex; width: 24px; height: 12px; border: 1px solid var(--ios-secondary); border-radius: 3px; padding: 2px; position: relative; }
+.ios-battery > span { width: 90%; background: var(--ios-text); border-radius: 1px; }
+.ios-battery::after { content: ''; position: absolute; right: -3px; top: 3px; height: 4px; width: 2px; border-radius: 0 1px 1px 0; background: var(--ios-secondary); }
+.ios-navigation { position: relative; height: 44px; flex: 0 0 44px; display: flex; align-items: center; padding-inline: 10px; }
+.ios-navigation:empty { height: 14px; flex-basis: 14px; }
+.ios-navigation[data-scrolled="true"] { border-bottom: .5px solid var(--ios-line); }
+.ios-navigation-title { position: absolute; left: 50%; transform: translateX(-50%); font-size: 15px; font-weight: 600; pointer-events: none; }
+.ios-back { display: inline-flex; align-items: center; color: var(--ios-blue); font-size: 16px; min-height: 44px; padding-right: 12px; }
+.ios-scroll { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; scrollbar-width: none; }
+.ios-scroll::-webkit-scrollbar { display: none; }
+.ios-content { max-width: 640px; margin-inline: auto; padding: 0 var(--ios-inset) 40px; }
+.ios-page-heading { padding: 8px 0 28px; }
+.ios-page-heading h1 { font-size: 34px; font-weight: 700; letter-spacing: -.035em; line-height: 1.2; }
+.ios-page-heading > p { color: var(--ios-secondary); font-size: 15px; line-height: 1.65; margin-top: 10px; max-width: 38ch; }
+.ios-section { margin-bottom: 28px; }
+.ios-section-label { color: var(--ios-secondary); font-size: 12px; line-height: 1.5; text-transform: uppercase; letter-spacing: .06em; font-weight: 500; padding: 0 var(--ios-inset) 10px; }
+.ios-group { background: var(--ios-card); border: .5px solid var(--ios-line); border-radius: 14px; overflow: hidden; }
+.ios-section-footer { font-size: 13px; color: var(--ios-secondary); line-height: 1.6; padding: 10px var(--ios-inset) 0; }
+.ios-profile { display: flex; align-items: center; justify-content: space-between; text-align: left; gap: 12px; padding: 24px var(--ios-inset); width: 100%; }
+.ios-eyebrow { font-size: 11px; letter-spacing: .07em; line-height: 1.6; color: var(--ios-secondary); font-weight: 500; }
+.ios-profile h2 { font-size: 32px; font-weight: 650; letter-spacing: -.035em; line-height: 1.2; margin: 8px 0; }
+.ios-profile p { color: var(--ios-body); font-size: 15px; line-height: 1.5; }
+.ios-profile-footer { border-top: .5px solid var(--ios-line); display: flex; align-items: center; gap: 7px; color: var(--ios-secondary); padding: 13px var(--ios-inset); font-size: 13px; }
+.ios-chevron { color: var(--ios-secondary); flex-shrink: 0; }
+.ios-menu-row { position: relative; display: flex; gap: 13px; align-items: center; min-height: 70px; width: 100%; padding: 14px 16px; text-align: left; transition: background .15s; }
+.ios-menu-row + .ios-menu-row::before { content: ''; position: absolute; top: 0; left: 58px; right: 0; border-top: .5px solid var(--ios-line); }
+.ios-menu-icon { color: var(--ios-blue); background: var(--ios-raised); width: 29px; height: 29px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ios-menu-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; font-size: 16px; line-height: 1.3; }
+.ios-menu-text small { color: var(--ios-secondary); font-size: 13px; }
+.ios-menu-row:active, .ios-profile:active { background: var(--ios-raised); }
+.ios-availability { display: flex; align-items: center; justify-content: center; gap: 7px; color: var(--ios-secondary); font-size: 13px; padding-bottom: 8px; }
+.ios-availability > span { width: 6px; height: 6px; border-radius: 50%; background: var(--ios-blue); }
+.ios-home-area { flex: 0 0 24px; height: 24px; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 8px; background: var(--ios-bg); }
+.ios-home-area > span { height: 5px; width: 124px; background: var(--ios-text); border-radius: 5px; }
+.ios-prose { padding: var(--ios-inset); color: var(--ios-body); font-size: 15px; line-height: 1.75; }
+.ios-card-title { color: var(--ios-text); font-size: 24px; font-weight: 600; letter-spacing: -.025em; margin-bottom: 14px; }
+.ios-detail-row { padding: 18px var(--ios-inset); }
+.ios-detail-row + .ios-detail-row { border-top: .5px solid var(--ios-line); }
+.ios-detail-row h3 { font-size: 15px; font-weight: 550; margin-bottom: 7px; }
+.ios-detail-row p { font-size: 15px; line-height: 1.7; color: var(--ios-secondary); }
+.ios-timeline { border-left: 1px solid var(--ios-line); padding-left: 18px; margin-left: 4px; }
+.ios-career-entry { position: relative; margin-bottom: 30px; }
+.ios-timeline-marker { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--ios-secondary); top: 6px; left: -22px; box-shadow: 0 0 0 4px var(--ios-bg); }
+.ios-career-entry:first-child .ios-timeline-marker { background: var(--ios-blue); }
+.ios-date-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 2px 12px; }
+.ios-date { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--ios-secondary); line-height: 1.5; }
+.ios-current { display: inline-flex; align-items: center; gap: 5px; color: var(--ios-blue); font-size: 11px; }
+.ios-current::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.ios-company-header { padding: 20px 16px; display: flex; gap: 12px; align-items: flex-start; border-bottom: .5px solid var(--ios-line); }
+.ios-company-logo { width: 34px; height: 34px; border-radius: 7px; object-fit: contain; background: #fff; flex-shrink: 0; }
+.ios-company-header > div { flex: 1; min-width: 0; }
+.ios-company-header h2 { font-size: 19px; letter-spacing: -.02em; font-weight: 600; line-height: 1.35; }
+.ios-company-header p { font-size: 14px; color: var(--ios-secondary); margin-top: 5px; line-height: 1.5; }
+.ios-icon-action { color: var(--ios-blue); min-width: 32px; min-height: 36px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 6px; }
+.ios-career-body { padding: 20px 17px 8px; }
+.ios-contributions { padding-left: 16px; list-style: disc; color: var(--ios-body); font-size: 15px; line-height: 1.75; }
+.ios-contributions:empty { display: none; }
+.ios-contributions li + li { margin-top: 18px; }
+.ios-contributions li::marker { color: var(--ios-secondary); font-size: 10px; }
+.ios-emphasis { color: var(--ios-text); font-weight: 600; }
+.ios-emphasis-outcome { color: var(--ios-blue); }
+.ios-disclosure { margin-top: 20px; border-top: .5px solid var(--ios-line); }
+.ios-disclosure summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; color: var(--ios-blue); font-size: 14px; min-height: 48px; padding-top: 4px; }
+.ios-disclosure summary::-webkit-details-marker { display: none; }
+.ios-disclosure[open] summary svg { transform: rotate(180deg); }
+.ios-disclosure-content { padding: 14px 0 8px; }
+.ios-small-heading { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--ios-secondary); margin: 24px 0 10px; }
+.ios-stack { font-size: 13px; line-height: 1.8; color: var(--ios-secondary); overflow-wrap: anywhere; }
+.ios-projects { display: grid; gap: 24px; }
+.ios-project { padding: 22px var(--ios-inset) 6px; }
+.ios-project-heading { display: flex; justify-content: space-between; align-items: center; min-height: 28px; margin-bottom: 12px; }
+.ios-project-links { display: flex; gap: 4px; }
+.ios-project h2 { font-size: 24px; line-height: 1.3; font-weight: 600; letter-spacing: -.03em; margin-bottom: 12px; }
+.ios-project-description { font-size: 15px; color: var(--ios-body); line-height: 1.75; }
+.ios-project-preview { border-left: 2px solid var(--ios-line); margin-top: 24px; padding-left: 14px; font-size: 15px; line-height: 1.75; color: var(--ios-body); }
+.ios-project-stack { margin-top: 20px; }
+.ios-project-note { border-left: 2px solid var(--ios-line); margin-top: 24px; padding-left: 14px; font-size: 14px; color: var(--ios-secondary); line-height: 1.7; }
+.ios-project-note p + p { margin-top: 10px; }
+.ios-resume-actions { display: flex; align-items: stretch; gap: 10px; margin: 0 0 28px; }
+.ios-primary-action, .ios-secondary-action { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 11px; min-height: 48px; padding: 12px; font-size: 14px; font-weight: 550; flex: 1; }
+.ios-primary-action { background: var(--ios-action); color: var(--ios-bg); }
+.ios-secondary-action { background: var(--ios-card); border: .5px solid var(--ios-line); color: var(--ios-blue); }
+.ios-resume-row { padding: 20px var(--ios-inset); }
+.ios-resume-row + .ios-resume-row { border-top: .5px solid var(--ios-line); }
+.ios-resume-row h3 { font-size: 16px; font-weight: 550; line-height: 1.5; margin-bottom: 6px; }
+.ios-resume-row p { font-size: 15px; line-height: 1.65; color: var(--ios-body); }
+.ios-resume-row > span { display: block; font-size: 13px; line-height: 1.5; color: var(--ios-secondary); margin-top: 10px; font-variant-numeric: tabular-nums; }
+.ios-study-card { padding: 24px var(--ios-inset); margin-bottom: 28px; }
+.ios-study-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+.ios-study-card h2 { font-size: 23px; letter-spacing: -.025em; line-height: 1.4; font-weight: 600; margin-bottom: 16px; }
+.ios-study-degree { color: var(--ios-body); line-height: 1.75; font-size: 16px; }
+.ios-study-period { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-top: .5px solid var(--ios-line); padding-top: 20px; margin-top: 24px; font-size: 14px; line-height: 1.5; }
+.ios-study-period span { color: var(--ios-secondary); }
+.ios-study-period strong { font-weight: 500; font-variant-numeric: tabular-nums; }
+.ios-study-result { padding: 24px var(--ios-inset); }
+.ios-study-result > span { color: var(--ios-body); font-size: 14px; }
+.ios-study-result strong { display: block; margin: 12px 0 10px; color: var(--ios-blue); font-size: 32px; font-weight: 550; letter-spacing: -.035em; font-variant-numeric: tabular-nums; line-height: 1.3; }
+.ios-study-result p { color: var(--ios-secondary); font-size: 13px; line-height: 1.6; }
+.ios-email-card { padding: 24px var(--ios-inset); }
+.ios-email-card > svg { color: var(--ios-blue); margin-bottom: 18px; }
+.ios-email-card > a { display: block; font-size: 18px; letter-spacing: -.025em; font-weight: 550; overflow-wrap: anywhere; line-height: 1.5; }
+.ios-email-card p { font-size: 14px; color: var(--ios-secondary); margin-top: 10px; }
+.ios-email-actions { border-top: .5px solid var(--ios-line); display: flex; }
+.ios-email-actions > * { min-height: 48px; padding: 12px 18px; font-size: 14px; color: var(--ios-blue); display: flex; align-items: center; gap: 8px; }
+.ios-email-actions a { flex: 1; }
+.ios-email-actions button { border-left: .5px solid var(--ios-line); }
+.ios-copy-status { margin: -18px 16px 18px; color: var(--ios-secondary); font-size: 13px; line-height: 1.6; }
+.ios-copy-status:empty { display: none; }
+.ios-social-icon { width: 29px; display: flex; align-items: center; justify-content: center; color: var(--ios-body); }
+.ios-location { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--ios-secondary); font-size: 13px; }
+.portfolio-surface button, .portfolio-surface a { touch-action: manipulation; }
+.portfolio-surface a:hover, .ios-disclosure summary:hover { filter: brightness(1.14); }
+@container (min-width: 600px) {
+  .ios-content { padding-inline: 32px; }
+  .ios-page-heading { padding-top: 16px; }
+}
+@container (max-width: 340px) {
+  .ios-content { --ios-inset: 16px; }
+  .ios-primary-action, .ios-secondary-action { gap: 5px; padding-inline: 8px; font-size: 13px; }
+  .ios-primary-action > svg:last-child { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-surface *, .portfolio-surface *::before { scroll-behavior: auto; transition: none; }
+}
+
+.ios-title-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.ios-page-illustration { flex: 0 0 52px; width: 52px; height: 56px; object-fit: contain; }
+
+.ios-screen[data-page="Overview"] .ios-page-heading { padding-block: 8px 20px; }
+.ios-screen[data-page="Overview"] .ios-page-heading h1 { font-size: 28px; letter-spacing: -.025em; }
+
+.desktop-hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 64px; align-items: center; height: 100%; }
+.desktop-hero-copy { text-align: left; max-width: 560px; }
+.desktop-hero-name { font-size: clamp(72px, 6.5vw, 96px); line-height: 1.05; }
+.desktop-phone-stage { height: min(86dvh, 800px); width: 100%; max-width: 490px; justify-self: end; }
+.ios-menu-row[data-featured="true"] { min-height: 82px; }
+.ios-menu-row[data-featured="true"] .ios-menu-text > span { font-size: 17px; font-weight: 600; }
+.ios-menu-row[data-featured="true"] .ios-menu-icon { width: 32px; height: 32px; }
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .desktop-hero-grid { gap: 32px; }
+  .desktop-hero-copy h2 { font-size: 25px; }
+}
+
+.desktop-projects-action { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 50px; padding: 13px 22px; margin-bottom: 24px; border-radius: 11px; background: var(--apple-blue); color: #09090b; font-size: 16px; font-weight: 600; transition: filter .15s; }
+.desktop-projects-action:hover { filter: brightness(1.12); }
+.desktop-projects-action:focus-visible { outline: 2px solid var(--apple-blue); outline-offset: 4px; }
+.ios-menu-row { transition: background .15s, box-shadow .15s; }
+.ios-menu-row:focus-visible { background: var(--ios-raised); outline: none; box-shadow: inset 0 0 0 2px var(--ios-blue); }
+.ios-menu-row:focus-visible > .ios-chevron { color: var(--ios-blue); }
+@media (hover: hover) {
+  .ios-menu-row:hover { background: var(--ios-raised); }
+  .ios-menu-row:hover > .ios-chevron { color: var(--ios-blue); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .desktop-projects-action { transition: none; }
+}
+
+.starfield-2d { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.starfield-layer { position: absolute; inset: -5%; animation: starfield-drift 60s linear infinite alternate; }
+.starfield-layer > span { position: absolute; border-radius: 50%; background: #a6b7ce; }
+@keyframes starfield-drift { to { transform: translate3d(1%, .5%, 0); } }
+.phone-loading { position: relative; top: 6.5%; height: 87%; width: min(100%, 325px); margin-inline: auto; border: 1px solid #626974; border-radius: 42px; background: #09090b; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; color: #a4a4b1; font-size: 14px; }
+@media (prefers-reduced-motion: reduce) { .starfield-layer { animation: none; } }

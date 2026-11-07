@@ -14,9 +14,14 @@ export default defineConfig({
     }),
   ],
   build: {
+    manifest: true,
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (/\/node_modules\/(react|react-dom|scheduler)\//.test(id) || id.includes('commonjsHelpers')) {
+            return 'react-vendor'
+          }
+
           if (id.includes('framer-motion')) {
             return 'motion'
           }

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76 80" fill="none" stroke="#a4a4b1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+<style>
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .9s ease-out forwards; }
+  .detail { animation-delay: .18s; }
+  .finish { animation-delay: .4s; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { .draw { animation: none; stroke-dashoffset: 0; } }
+</style>
+<style>.accent { stroke: #0091ff; stroke-width: 2; }</style>
+<path class="draw" pathLength="1" d="M11 27h54v34a5 5 0 0 1-5 5H16a5 5 0 0 1-5-5V27ZM27 27v-9a4 4 0 0 1 4-4h14a4 4 0 0 1 4 4v9"/><path class="draw detail" pathLength="1" d="M11 37c15 8 39 8 54 0M33 40v8h10v-8"/><path class="draw finish accent" pathLength="1" d="m23 58 10-5 9 3 12-9m-7 0h7v7"/>
+</svg>
