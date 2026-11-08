@@ -236,21 +236,11 @@ body {
 .ios-detail-row + .ios-detail-row { border-top: .5px solid var(--ios-line); }
 .ios-detail-row h3 { font-size: 15px; font-weight: 550; margin-bottom: 7px; }
 .ios-detail-row p { font-size: 15px; line-height: 1.7; color: var(--ios-secondary); }
-.ios-timeline { border-left: 1px solid var(--ios-line); padding-left: 18px; margin-left: 4px; }
-.ios-career-entry { position: relative; margin-bottom: 30px; }
-.ios-timeline-marker { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--ios-secondary); top: 6px; left: -22px; box-shadow: 0 0 0 4px var(--ios-bg); }
-.ios-career-entry:first-child .ios-timeline-marker { background: var(--ios-blue); }
-.ios-date-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 2px 12px; }
 .ios-date { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--ios-secondary); line-height: 1.5; }
 .ios-current { display: inline-flex; align-items: center; gap: 5px; color: var(--ios-blue); font-size: 11px; }
 .ios-current::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.ios-company-header { padding: 20px 16px; display: flex; gap: 12px; align-items: flex-start; border-bottom: .5px solid var(--ios-line); }
 .ios-company-logo { width: 34px; height: 34px; border-radius: 7px; object-fit: contain; background: #fff; flex-shrink: 0; }
-.ios-company-header > div { flex: 1; min-width: 0; }
-.ios-company-header h2 { font-size: 19px; letter-spacing: -.02em; font-weight: 600; line-height: 1.35; }
-.ios-company-header p { font-size: 14px; color: var(--ios-secondary); margin-top: 5px; line-height: 1.5; }
 .ios-icon-action { color: var(--ios-blue); min-width: 32px; min-height: 36px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 6px; }
-.ios-career-body { padding: 20px 17px 8px; }
 .ios-contributions { padding-left: 16px; list-style: disc; color: var(--ios-body); font-size: 15px; line-height: 1.75; }
 .ios-contributions:empty { display: none; }
 .ios-contributions li + li { margin-top: 18px; }
@@ -359,3 +349,113 @@ body {
 @keyframes starfield-drift { to { transform: translate3d(1%, .5%, 0); } }
 .phone-loading { position: relative; top: 6.5%; height: 87%; width: min(100%, 325px); margin-inline: auto; border: 1px solid #626974; border-radius: 42px; background: #09090b; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; color: #a4a4b1; font-size: 14px; }
 @media (prefers-reduced-motion: reduce) { .starfield-layer { animation: none; } }
+
+/* Size against the content surface: works on real phones and inside the 3D phone. */
+.portfolio-surface {
+  --ios-inset: clamp(14px, 4.8cqi, 24px);
+  --ios-body-size: clamp(.9375rem, .875rem + .25cqi, 1rem);
+  --ios-heading-size: clamp(1.75rem, 1.25rem + 2cqi, 2.125rem);
+}
+.ios-content { overflow-wrap: anywhere; }
+.ios-page-heading h1 { font-size: var(--ios-heading-size); font-weight: 650; }
+.ios-screen[data-page="Overview"] .ios-page-heading h1 { font-size: clamp(1.625rem, 1.25rem + 1.5cqi, 1.875rem); }
+.ios-title-row h1, .ios-profile > div { min-width: 0; }
+.ios-page-illustration { flex-basis: clamp(40px, 13cqi, 52px); width: clamp(40px, 13cqi, 52px); height: auto; }
+.ios-prose, .ios-contributions, .ios-project-description, .ios-project-preview,
+.ios-detail-row p, .ios-resume-row p { font-size: var(--ios-body-size); line-height: 1.7; }
+.ios-card-title, .ios-project h2 { font-size: clamp(1.25rem, 1rem + 1cqi, 1.5rem); }
+.ios-study-card h2 { font-size: clamp(1.25rem, 1rem + 1cqi, 1.4375rem); }
+.ios-profile h2 { font-size: clamp(1.75rem, 1.25rem + 2cqi, 2rem); }
+.ios-menu-text, .ios-menu-row[data-featured="true"] .ios-menu-text > span { font-size: 1rem; }
+.ios-menu-row[data-featured="true"] .ios-menu-text > span { font-weight: 600; }
+.ios-menu-text small, .ios-section-footer, .ios-date, .ios-stack { font-size: .8125rem; }
+.ios-menu-row, .ios-menu-row[data-featured="true"] { min-height: 72px; }
+.ios-study-period, .ios-project-heading { flex-wrap: wrap; }
+.ios-study-period > * { min-width: 0; }
+.ios-current { flex-shrink: 0; }
+.ios-disclosure summary { gap: 12px; }
+.ios-disclosure summary svg, .ios-email-actions svg, .ios-location svg { flex-shrink: 0; }
+.ios-resume-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 145px), 1fr)); }
+.ios-primary-action, .ios-secondary-action { font-size: .875rem; }
+.ios-location { flex-wrap: wrap; text-align: center; line-height: 1.6; }
+@container (max-width: 374px) {
+  .ios-page-heading { padding-bottom: 22px; }
+  .ios-section { margin-bottom: 24px; }
+  .ios-section-label { padding-inline: 4px; }
+  .ios-profile { padding-block: 20px; }
+  .ios-menu-row { gap: 10px; padding-inline: 12px; }
+  .ios-menu-row + .ios-menu-row::before { left: 51px; }
+  .ios-menu-text { gap: 4px; }
+  .ios-project { padding-top: 18px; }
+  .ios-study-card { padding-block: 20px; }
+  .ios-study-period { flex-direction: column; gap: 6px; }
+  .ios-email-actions { flex-wrap: wrap; }
+  .ios-email-actions > * { padding-inline: 12px; }
+}
+/* Let short laptop windows scroll instead of clipping the introduction. */
+@media (min-width: 1024px) and (max-height: 760px) {
+  .desktop-hero-grid { min-height: 640px; height: auto; padding-block: 24px; }
+  .desktop-hero-viewport { overflow-y: auto; }
+  .desktop-hero-name { font-size: clamp(3.5rem, 6vw, 5rem); }
+  .desktop-phone-stage { height: 640px; }
+}
+@media (max-width: 1023px) {
+  .ios-status { padding-top: env(safe-area-inset-top, 0px); height: calc(47px + env(safe-area-inset-top, 0px)); flex-basis: calc(47px + env(safe-area-inset-top, 0px)); }
+  .ios-home-area { height: calc(24px + env(safe-area-inset-bottom, 0px)); flex-basis: calc(24px + env(safe-area-inset-bottom, 0px)); padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* Experience cards follow the supplied single-column editorial layout. */
+.ios-career-list { display: grid; gap: clamp(20px, 6cqi, 28px); }
+.ios-career-card {
+  container-type: inline-size;
+  padding: clamp(16px, 5cqi, 28px);
+  background: var(--ios-card);
+  border: .5px solid var(--ios-line);
+  border-radius: 14px;
+  overflow-wrap: anywhere;
+}
+.ios-career-card .ios-career-heading h2 {
+  margin: 0;
+  font: 600 clamp(1.5rem, 1.125rem + 2.4cqi, 2rem)/1.18 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  letter-spacing: -.015em;
+}
+.ios-career-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; margin-top: 12px; }
+.ios-career-company { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.ios-career-company .ios-company-logo { width: 22px; height: 22px; border-radius: 4px; }
+.ios-career-company a { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; font-size: .875rem; font-weight: 600; color: var(--ios-text); text-decoration: underline; text-decoration-color: var(--ios-secondary); text-underline-offset: 3px; }
+.ios-career-company a svg { color: var(--ios-blue); flex-shrink: 0; }
+.ios-career-company a:hover { text-decoration-color: var(--ios-blue); }
+.ios-career-meta .ios-current { font-size: .8125rem; }
+.ios-career-card .ios-career-body { margin-top: 18px; padding: 18px 0 0; border-top: .5px solid var(--ios-line); }
+.ios-career-lead { color: var(--ios-body); font-size: var(--ios-body-size); line-height: 1.7; }
+.ios-career-card .ios-contributions { line-height: 1.7; padding-left: 18px; }
+.ios-career-card .ios-contributions li + li { margin-top: 12px; }
+.ios-career-lead + .ios-contributions { margin-top: 20px; }
+.ios-career-card .ios-disclosure { margin-top: 20px; }
+.ios-career-card .ios-disclosure summary { font-weight: 600; }
+.ios-career-card .ios-disclosure summary svg { transition: transform .25s ease; }
+.ios-group-title { font-size: .875rem; font-weight: 600; line-height: 1.5; margin-bottom: 12px; }
+.ios-career-card .ios-disclosure-content > section + section { margin-top: 24px; }
+.ios-career-card .ios-career-tools { margin-top: 0; }
+.ios-career-stack { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 18px; font-size: .875rem; line-height: 1.65; }
+.ios-career-stack dt { color: var(--ios-secondary); }
+.ios-career-stack dd { color: var(--ios-body); min-width: 0; }
+.ios-bridge-figure { margin: 24px 0; }
+.ios-bridge { display: block; width: min(100%, 380px); height: auto; overflow: visible; }
+.ios-bridge .node { fill: var(--ios-raised); stroke: var(--ios-line); }
+.ios-bridge text { fill: var(--ios-text); font: 500 13px -apple-system, BlinkMacSystemFont, sans-serif; text-anchor: middle; }
+.ios-bridge .wire { fill: none; stroke: var(--ios-secondary); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 1; animation: ios-bridge-wire .9s ease-out .2s forwards; }
+.ios-bridge .dot { fill: var(--ios-blue); }
+.ios-bridge-figure figcaption { margin-top: 8px; color: var(--ios-secondary); font-size: .8125rem; line-height: 1.6; }
+@keyframes ios-bridge-wire { to { stroke-dashoffset: 0; } }
+@container (max-width: 420px) {
+  .ios-career-meta { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .ios-career-meta .ios-current { margin-top: 6px; }
+  .ios-career-stack { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .ios-career-stack dd + dt { margin-top: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ios-bridge .wire { animation: none; stroke-dashoffset: 0; }
+  .ios-bridge .dot { display: none; }
+  .ios-career-card .ios-disclosure summary svg { transition: none; }
+}

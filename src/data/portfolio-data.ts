@@ -12,6 +12,8 @@ export interface Experience {
   duration: string;
   description: string[];
   skills: string[];
+  nativeBridge?: boolean;
+  contributionGroups?: { title: string; indices: number[] }[];
 }
 
 export interface Project {
@@ -63,9 +65,14 @@ export const experiences: Experience[] = [
     companyUrl: 'https://www.linkedin.com/company/best-buy/mycompany/',
     logo: bestBuyLogo,
     role: 'Software Engineer 1',
+    nativeBridge: true,
+    contributionGroups: [
+      { title: 'Sessions and data', indices: [2, 3, 4] },
+      { title: 'Native code and teamwork', indices: [6, 7, 8, 9, 5, 10] },
+    ],
     description: [
       'Ship features in a large Nx monorepo powering a React Native retail app used by millions of Best Buy customers.',
-      'Investigated and fixed iOS-only guest-user regressions by comparing cross-platform behavior and tracing state differences across app layers.',
+      'Built event management flows with native calendar integration and reminder scheduling across iOS and Android.',
       'Resolved React Native bridge issues in logout flows by fixing stale native-to-JS data handoff and user-session synchronization gaps.',
       'Debugged GraphQL query failures behind inconsistent saved-items state and improved reliability with targeted cache reset and invalidation fixes.',
       'Implemented session-aware cache reset logic so guest and signed-in users consistently see correct, user-specific data after auth transitions.',

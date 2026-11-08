@@ -72,7 +72,7 @@ export function HeroWithPhone() {
 
   // Desktop: Show full layout with 3D phone
   return (
-    <div className="h-screen w-screen overflow-hidden bg-[#030712] relative">
+    <div className="desktop-hero-viewport h-[100dvh] w-screen overflow-hidden bg-[#030712] relative">
       {/* Mouse spotlight glow */}
       <div
         ref={spotlightRef}

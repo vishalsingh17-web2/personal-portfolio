@@ -31,15 +31,15 @@ const phrases = [...impactPhrases, ...technicalPhrases]
   .map(phrase => phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
 const pattern = new RegExp(`(?<!\\w)(?:\\d+(?:\\.\\d+)?%|${phrases.join('|')})(?!\\w)`, 'gi')
 
-export function EmphasizedText({ text }: { text: string }) {
+export function EmphasizedText({ text, limit = 2 }: { text: string; limit?: number }) {
   const matches = [...text.matchAll(pattern)].map(match => ({
     start: match.index,
     text: match[0],
     outcome: impact.has(match[0].toLowerCase()) || /\d+(?:\.\d+)?%/.test(match[0]),
   }))
-  // Give outcomes priority, then keep only two focal points per sentence.
+  // Give outcomes priority, then limit focal points per sentence.
   const selected = matches.sort((a, b) => Number(b.outcome) - Number(a.outcome) || a.start - b.start)
-    .slice(0, 2).sort((a, b) => a.start - b.start)
+    .slice(0, limit).sort((a, b) => a.start - b.start)
   let cursor = 0
   const parts = selected.map(match => {
     const before = text.slice(cursor, match.start)

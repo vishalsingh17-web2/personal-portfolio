@@ -9,6 +9,7 @@ import {
 import { personalInfo, experiences, projects, skills, education } from '@/data/portfolio-data'
 import { haptic } from '@/lib/utils'
 import { EmphasizedText } from './EmphasizedText'
+import { ExperienceCard } from './ExperienceCard'
 
 type Screen = 'home' | 'about' | 'experience' | 'projects' | 'contact' | 'resume' | 'education'
 
@@ -137,8 +138,8 @@ function AboutScreen({ onBack }: { onBack: () => void }) {
   )
 }
 
-function Contributions({ items }: { items: string[] }) {
-  return <ul className="ios-contributions">{items.map(item => <li key={item}><EmphasizedText text={item} /></li>)}</ul>
+function Contributions({ items, emphasisLimit }: { items: string[]; emphasisLimit?: number }) {
+  return <ul className="ios-contributions">{items.map(item => <li key={item}><EmphasizedText text={item} limit={emphasisLimit} /></li>)}</ul>
 }
 
 function MoreDetails({ label, children }: { label: string; children: ReactNode }) {
@@ -148,27 +149,8 @@ function MoreDetails({ label, children }: { label: string; children: ReactNode }
 function ExperienceScreen({ onBack }: { onBack: () => void }) {
   return (
     <ScreenLayout title="Experience" subtitle="Building mobile products, from early teams to retail at scale." onBack={onBack}>
-      <div className="ios-timeline">
-        {experiences.map((exp, index) => (
-          <article className="ios-career-entry" key={exp.company} data-current={index === 0}>
-            <div className="ios-timeline-marker" aria-hidden="true" />
-            <div className="ios-date-line"><p className="ios-date">{exp.duration}</p>{index === 0 && <span className="ios-current">Current</span>}</div>
-            <div className="ios-group">
-              <header className="ios-company-header">
-                {exp.logo && <img src={exp.logo} alt="" className="ios-company-logo" />}
-                <div><h2>{exp.company}</h2><p>{exp.role}</p></div>
-                <a href={exp.companyUrl} target="_blank" rel="noopener noreferrer" className="ios-icon-action" aria-label={`Visit ${exp.company}`}><ArrowUpRight size={18} /></a>
-              </header>
-              <div className="ios-career-body">
-                <Contributions items={exp.description.slice(0, 2)} />
-                <MoreDetails label={exp.description.length > 2 ? 'More about this role' : 'Tools & technologies'}>
-                  <Contributions items={exp.description.slice(2)} />
-                  <h3 className="ios-small-heading">Tools & technologies</h3><p className="ios-stack">{exp.skills.join(' · ')}</p>
-                </MoreDetails>
-              </div>
-            </div>
-          </article>
-        ))}
+      <div className="ios-career-list">
+        {experiences.map((exp, index) => <ExperienceCard key={exp.company} experience={exp} current={index === 0} />)}
       </div>
     </ScreenLayout>
   )
